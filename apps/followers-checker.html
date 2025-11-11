@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Followers Checker - Text Comparison</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/followers-checker.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="../index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Followers Checker
+                </a>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" id="theme-icon">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Header Section -->
+        <div class="card header-card">
+            <div class="card-header">
+                <div class="card-title">Instagram Followers Checker</div>
+                <div class="card-subtitle">Find out who's not following you back</div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="content-grid">
+            <!-- Left Panel: Following -->
+            <div class="card input-card">
+                <div class="input-header">
+                    <div class="input-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                        Following
+                    </div>
+                    <div class="count-badge" id="following-count">0</div>
+                </div>
+                <textarea 
+                    id="following-input" 
+                    class="text-input" 
+                    placeholder="Paste your following list here...&#10;&#10;Example:&#10;username1&#10;username2&#10;username3&#10;&#10;One username per line"
+                    spellcheck="false"
+                ></textarea>
+                <div class="input-footer">
+                    <button class="action-btn secondary" onclick="clearInput('following')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Clear
+                    </button>
+                    <button class="action-btn secondary" onclick="pasteFromClipboard('following')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        Paste
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Panel: Followers -->
+            <div class="card input-card">
+                <div class="input-header">
+                    <div class="input-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <line x1="20" y1="8" x2="20" y2="14"></line>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                        Followers
+                    </div>
+                    <div class="count-badge" id="followers-count">0</div>
+                </div>
+                <textarea 
+                    id="followers-input" 
+                    class="text-input" 
+                    placeholder="Paste your followers list here...&#10;&#10;Example:&#10;username1&#10;username2&#10;username3&#10;&#10;One username per line"
+                    spellcheck="false"
+                ></textarea>
+                <div class="input-footer">
+                    <button class="action-btn secondary" onclick="clearInput('followers')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Clear
+                    </button>
+                    <button class="action-btn secondary" onclick="pasteFromClipboard('followers')">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        Paste
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Compare Button -->
+        <div class="compare-section">
+            <button class="compare-btn" onclick="compareUsers()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="17 1 21 5 17 9"></polyline>
+                    <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                    <polyline points="7 23 3 19 7 15"></polyline>
+                    <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+                </svg>
+                Compare Lists
+            </button>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results-section" style="display: none;">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(37, 99, 235, 0.1); color: var(--accent-color);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <polyline points="17 11 19 13 23 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Mutual Followers</div>
+                        <div class="stat-value" id="mutual-count">0</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--danger-color);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Not Following Back</div>
+                        <div class="stat-value" id="not-following-back-count">0</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning-color);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <line x1="20" y1="8" x2="20" y2="14"></line>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Not Following You</div>
+                        <div class="stat-value" id="not-following-you-count">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Display -->
+            <div class="card results-card">
+                <div class="results-header">
+                    <div class="results-tabs">
+                        <button class="tab-btn active" onclick="showTab('not-following-back')" id="tab-not-following-back">
+                            Not Following Back
+                        </button>
+                        <button class="tab-btn" onclick="showTab('not-following-you')" id="tab-not-following-you">
+                            Not Following You
+                        </button>
+                        <button class="tab-btn" onclick="showTab('mutual')" id="tab-mutual">
+                            Mutual
+                        </button>
+                    </div>
+                    <div class="results-actions">
+                        <button class="action-btn secondary" onclick="copyList()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            Copy List
+                        </button>
+                        <button class="action-btn secondary" onclick="downloadList()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            Download
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="results-content">
+                    <div id="not-following-back-content" class="tab-content active">
+                        <div class="empty-state" id="empty-not-following-back">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <p>Everyone you follow is following you back! 🎉</p>
+                        </div>
+                        <div class="user-list" id="not-following-back-list"></div>
+                    </div>
+
+                    <div id="not-following-you-content" class="tab-content">
+                        <div class="empty-state" id="empty-not-following-you">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <p>You're following all your followers! 🎉</p>
+                        </div>
+                        <div class="user-list" id="not-following-you-list"></div>
+                    </div>
+
+                    <div id="mutual-content" class="tab-content">
+                        <div class="empty-state" id="empty-mutual">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                            <p>No mutual followers found</p>
+                        </div>
+                        <div class="user-list" id="mutual-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Section -->
+        <div class="info-section">
+            <h3>How to Use</h3>
+            <div class="info-dropdowns">
+                <div class="dropdown">
+                    <button class="dropdown-btn" onclick="toggleDropdown('export')">
+                        <span>📤 Exporting Your Instagram Lists</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="dropdown-content" id="export-dropdown">
+                        <ol style="text-align: left; margin: 10px 0; padding-left: 20px; color: var(--text-secondary);">
+                            <li>Go to Instagram Settings → Security → Download Data</li>
+                            <li>Request a download of your data</li>
+                            <li>Once received, extract the ZIP file</li>
+                            <li>Open the followers.json and following.json files</li>
+                            <li>Copy the usernames from these files and paste them here</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="dropdown">
+                    <button class="dropdown-btn" onclick="toggleDropdown('manual')">
+                        <span>✍️ Manual Method</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="dropdown-content" id="manual-dropdown">
+                        <p style="color: var(--text-secondary); text-align: left;">
+                            You can also manually copy usernames from your Instagram app:
+                        </p>
+                        <ol style="text-align: left; margin: 10px 0; padding-left: 20px; color: var(--text-secondary);">
+                            <li>Go to your profile</li>
+                            <li>Tap on "Following" or "Followers"</li>
+                            <li>Copy usernames one by one</li>
+                            <li>Paste them into the respective field (one per line)</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="dropdown">
+                    <button class="dropdown-btn" onclick="toggleDropdown('privacy')">
+                        <span>🔒 Privacy & Security</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="dropdown-content" id="privacy-dropdown">
+                        <p style="color: var(--text-secondary); text-align: left;">
+                            <strong>Your data is completely safe!</strong><br><br>
+                            ✓ All comparisons happen locally in your browser<br>
+                            ✓ No data is sent to any server<br>
+                            ✓ No login required<br>
+                            ✓ No data is stored or tracked<br><br>
+                            This tool is 100% client-side and open source.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Created by Wolf with ❤️</p>
+            <p>
+                <a href="https://github.com/thejeXD/wvlfgradecalculator" target="_blank" class="github-link">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    View on GitHub
+                </a>
+            </p>
+            <p style="font-size: 12px; color: #888; margin-top: 10px;">© 2025 All Rights Reserved</p>
+        </div>
+    </div>
+
+    <script src="../js/followers-checker.js"></script>
+</body>
+</html>
