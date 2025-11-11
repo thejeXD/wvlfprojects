@@ -5,10 +5,209 @@ let settings = {
     passingGrade: 59.5,
     requirementEnabled: false,
     customFormula: '',
-    theme: 'light'
+    theme: 'light',
+    componentBreakdown: false,
+    componentWeights: { performance: 40, activities: 30, exam: 30 }
 };
 
 const manuallyEdited = {};
+let currentComponentSubject = null;
+let currentComponentTerm = null;
+let componentFields = {
+    performance: [],
+    activities: [],
+    exam: []
+};
+
+// ==================== COMPONENT BREAKDOWN FUNCTIONS ====================
+
+function openComponentDrawer(subjectId, term) {
+    if (!settings.componentBreakdown) {
+        Swal.fire({
+            icon: 'info',
+            title: 'Feature Disabled',
+            html: `
+                <p>Component breakdown calculator is currently disabled.</p>
+                <p style="font-size: 14px; margin-top: 10px;">Enable it in <strong>Settings</strong> to use this feature.</p>
+            `,
+            confirmButtonColor: '#2563eb'
+        });
+        return;
+    }
+    
+    // Disable grade requirements when using component breakdown
+    if (settings.requirementEnabled) {
+        settings.requirementEnabled = false;
+        updateNeededHeader();
+        Swal.fire({
+            icon: 'info',
+            title: 'Auto-fill Disabled',
+            text: 'Grade requirements auto-fill has been disabled while using component breakdown.',
+            timer: 2000,
+            showConfirmButton: false
+        });
+    }
+    
+    currentComponentSubject = subjectId;
+    currentComponentTerm = term;
+    
+    // Update drawer title
+    const termName = term.charAt(0).toUpperCase() + term.slice(1);
+    document.getElementById('component-drawer-title').textContent = `Calculate ${termName} Grade`;
+    
+    // Update weight labels
+    document.getElementById('comp-perf-weight').textContent = `${settings.componentWeights.performance}%`;
+    document.getElementById('comp-act-weight').textContent = `${settings.componentWeights.activities}%`;
+    document.getElementById('comp-exam-weight').textContent = `${settings.componentWeights.exam}%`;
+    
+    // Reset component fields
+    componentFields = {
+        performance: [],
+        activities: [],
+        exam: []
+    };
+    
+    // Clear containers
+    document.getElementById('performance-tasks-container').innerHTML = '';
+    document.getElementById('activities-container').innerHTML = '';
+    document.getElementById('exam-container').innerHTML = '';
+    
+    // Add initial fields
+    addComponentField('performance');
+    addComponentField('activities');
+    addComponentField('exam');
+    
+    // Show drawer
+    document.getElementById('component-overlay').style.display = 'block';
+    document.getElementById('component-drawer').style.display = 'block';
+}
+
+function closeComponentDrawer() {
+    document.getElementById('component-overlay').style.display = 'none';
+    document.getElementById('component-drawer').style.display = 'none';
+}
+
+function addComponentField(type) {
+    const container = document.getElementById(`${type}-container` === 'performance-container' ? 'performance-tasks-container' : 
+                                               type === 'activities' ? 'activities-container' : 'exam-container');
+    const actualContainer = type === 'performance' ? document.getElementById('performance-tasks-container') : 
+                            type === 'activities' ? document.getElementById('activities-container') : 
+                            document.getElementById('exam-container');
+    
+    const fieldId = `${type}-${Date.now()}`;
+    const fieldDiv = document.createElement('div');
+    fieldDiv.className = 'component-field';
+    fieldDiv.id = fieldId;
+    
+    const labels = {
+        performance: 'Performance Task',
+        activities: 'Activity/Quiz',
+        exam: 'Exam'
+    };
+    
+    const count = componentFields[type].length + 1;
+    
+    fieldDiv.innerHTML = `
+        <input type="number" placeholder="${labels[type]} ${count}" min="0" max="100" step="0.01" oninput="calculateComponentGrade()">
+        <button onclick="removeComponentField('${fieldId}', '${type}')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    `;
+    
+    actualContainer.appendChild(fieldDiv);
+    componentFields[type].push(fieldId);
+}
+
+function removeComponentField(fieldId, type) {
+    const field = document.getElementById(fieldId);
+    if (field) {
+        field.remove();
+        componentFields[type] = componentFields[type].filter(id => id !== fieldId);
+        calculateComponentGrade();
+    }
+}
+
+function calculateComponentGrade() {
+    const weights = settings.componentWeights;
+    let totalGrade = 0;
+    let hasValues = false;
+    
+    // Calculate average for each component type
+    ['performance', 'activities', 'exam'].forEach(type => {
+        const container = type === 'performance' ? document.getElementById('performance-tasks-container') : 
+                         type === 'activities' ? document.getElementById('activities-container') : 
+                         document.getElementById('exam-container');
+        
+        const inputs = container.querySelectorAll('input[type="number"]');
+        let sum = 0;
+        let count = 0;
+        
+        inputs.forEach(input => {
+            const value = parseFloat(input.value);
+            if (!isNaN(value) && value >= 0) {
+                sum += value;
+                count++;
+                hasValues = true;
+            }
+        });
+        
+        if (count > 0) {
+            const average = sum / count;
+            const weightedGrade = average * (weights[type] / 100);
+            totalGrade += weightedGrade;
+        }
+    });
+    
+    document.getElementById('component-calculated-grade').textContent = hasValues ? totalGrade.toFixed(2) : '0.00';
+}
+
+function applyComponentGrade() {
+    const calculatedGrade = parseFloat(document.getElementById('component-calculated-grade').textContent);
+    
+    if (calculatedGrade === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'No Grades Entered',
+            text: 'Please enter at least one component grade.',
+            confirmButtonColor: '#2563eb'
+        });
+        return;
+    }
+    
+    // Apply to the term input
+    const subject = document.getElementById(`subject-${currentComponentSubject}`);
+    const termInput = subject.querySelector(`.${currentComponentTerm}`);
+    termInput.value = calculatedGrade.toFixed(2);
+    
+    // Recalculate GWA
+    calculateGWA(currentComponentSubject);
+    
+    closeComponentDrawer();
+    
+    Swal.fire({
+        icon: 'success',
+        title: 'Grade Applied!',
+        text: `${currentComponentTerm.charAt(0).toUpperCase() + currentComponentTerm.slice(1)} grade has been calculated and applied.`,
+        timer: 1500,
+        showConfirmButton: false
+    });
+}
+
+function attachCalcButtonListeners(container) {
+    const calcButtons = container.querySelectorAll('.calc-btn');
+    calcButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const subjectId = parseInt(this.getAttribute('data-subject'));
+            const term = this.getAttribute('data-term');
+            openComponentDrawer(subjectId, term);
+        });
+    });
+}
+
+// ==================== MEME AND MESSAGES ====================
 
 const passedMemes = [
     'memes/passed1.jpg',
@@ -113,18 +312,59 @@ function addSubject() {
     const subjectName = `Subject ${subjectCount}`;
     const deleteButton = `<button class="delete-btn" onclick="deleteSubject(${subjectCount})">Delete</button>`;
     
+    // Create calc buttons HTML
+    const calcButtonSVG = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <line x1="9" y1="9" x2="15" y2="9"/>
+            <line x1="9" y1="12" x2="15" y2="12"/>
+            <line x1="9" y1="15" x2="15" y2="15"/>
+        </svg>
+    `;
+    
+    const createCalcButton = (term) => settings.componentBreakdown ? 
+        `<button class="calc-btn" data-subject="${subjectCount}" data-term="${term}" title="Calculate from components">${calcButtonSVG}</button>` : '';
+    
     subjectDiv.innerHTML = `
         <label><input type="text" class="grade-input" placeholder="${subjectName}" value="${subjectName}" style="text-align: left; width: 100%;"></label>
-        <input type="number" class="grade-input prelim" data-field="prelim-${subjectCount}" placeholder="0" min="0" max="100" step="0.01" onchange="handleManualEdit(this, ${subjectCount}); calculateGWA(${subjectCount})" oninput="validateGrade(this); calculateGWA(${subjectCount})">
-        <input type="number" class="grade-input midterm" data-field="midterm-${subjectCount}" placeholder="0" min="0" max="100" step="0.01" onchange="handleManualEdit(this, ${subjectCount}); calculateGWA(${subjectCount})" oninput="validateGrade(this); calculateGWA(${subjectCount})">
-        <input type="number" class="grade-input prefinals" data-field="prefinals-${subjectCount}" placeholder="0" min="0" max="100" step="0.01" onchange="handleManualEdit(this, ${subjectCount}); calculateGWA(${subjectCount})" oninput="validateGrade(this); calculateGWA(${subjectCount})">
-        <input type="number" class="grade-input finals" data-field="finals-${subjectCount}" placeholder="0" min="0" max="100" step="0.01" onchange="handleManualEdit(this, ${subjectCount}); calculateGWA(${subjectCount})" oninput="validateGrade(this); calculateGWA(${subjectCount})">
+        <div class="grade-input-wrapper">
+            <input type="number" class="grade-input prelim" data-field="prelim-${subjectCount}" placeholder="0" min="0" max="100" step="0.01" onchange="handleManualEdit(this, ${subjectCount}); calculateGWA(${subjectCount})" oninput="validateGrade(this); calculateGWA(${subjectCount})">
+            ${createCalcButton('prelim')}
+        </div>
+        <div class="grade-input-wrapper">
+            <input type="number" class="grade-input midterm" data-field="midterm-${subjectCount}" placeholder="0" min="0" max="100" step="0.01" onchange="handleManualEdit(this, ${subjectCount}); calculateGWA(${subjectCount})" oninput="validateGrade(this); calculateGWA(${subjectCount})">
+            ${createCalcButton('midterm')}
+        </div>
+        <div class="grade-input-wrapper">
+            <input type="number" class="grade-input prefinals" data-field="prefinals-${subjectCount}" placeholder="0" min="0" max="100" step="0.01" onchange="handleManualEdit(this, ${subjectCount}); calculateGWA(${subjectCount})" oninput="validateGrade(this); calculateGWA(${subjectCount})">
+            ${createCalcButton('prefinals')}
+        </div>
+        <div class="grade-input-wrapper">
+            <input type="number" class="grade-input finals" data-field="finals-${subjectCount}" placeholder="0" min="0" max="100" step="0.01" onchange="handleManualEdit(this, ${subjectCount}); calculateGWA(${subjectCount})" oninput="validateGrade(this); calculateGWA(${subjectCount})">
+            ${createCalcButton('finals')}
+        </div>
         <div class="result-box" id="gwa-${subjectCount}">-</div>
         <div class="result-box" id="need-${subjectCount}" style="display: none;">-</div>
         ${deleteButton}
     `;
     
     container.appendChild(subjectDiv);
+    
+    // Attach event listeners to calc buttons
+    if (settings.componentBreakdown) {
+        attachCalcButtonListeners(subjectDiv);
+    }
+}
+
+function attachCalcButtonListeners(container) {
+    const calcButtons = container.querySelectorAll('.calc-btn');
+    calcButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const subjectId = parseInt(this.getAttribute('data-subject'));
+            const term = this.getAttribute('data-term');
+            openComponentDrawer(subjectId, term);
+        });
+    });
 }
 
 function handleManualEdit(input, id) {
@@ -522,11 +762,122 @@ function openSettings() {
     document.getElementById('passing-grade').value = settings.passingGrade.toFixed(2);
     document.getElementById('custom-formula').value = settings.customFormula;
     document.getElementById('requirement-toggle').checked = settings.requirementEnabled;
+    document.getElementById('component-toggle').checked = settings.componentBreakdown;
+    document.getElementById('w-performance').value = settings.componentWeights.performance;
+    document.getElementById('w-activities').value = settings.componentWeights.activities;
+    document.getElementById('w-exam').value = settings.componentWeights.exam;
+    document.getElementById('component-weights').style.display = settings.componentBreakdown ? 'block' : 'none';
+}
+
+function refreshAllSubjects() {
+    const subjects = document.querySelectorAll('.subject-row');
+    subjects.forEach(subject => {
+        const id = parseInt(subject.id.split('-')[1]);
+        const subjectName = subject.querySelector('input[type="text"]').value;
+        const grades = {
+            prelim: subject.querySelector('.prelim').value,
+            midterm: subject.querySelector('.midterm').value,
+            prefinals: subject.querySelector('.prefinals').value,
+            finals: subject.querySelector('.finals').value
+        };
+        
+        // Remove old subject
+        subject.remove();
+        
+        // Recreate with updated buttons
+        const container = document.getElementById('subjects-container');
+        const subjectDiv = document.createElement('div');
+        subjectDiv.className = 'subject-row';
+        subjectDiv.id = `subject-${id}`;
+        
+        const deleteButton = `<button class="delete-btn" onclick="deleteSubject(${id})">Delete</button>`;
+        
+        const calcButtonSVG = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <line x1="9" y1="9" x2="15" y2="9"/>
+                <line x1="9" y1="12" x2="15" y2="12"/>
+                <line x1="9" y1="15" x2="15" y2="15"/>
+            </svg>
+        `;
+        
+        const createCalcButton = (term) => settings.componentBreakdown ? 
+            `<button class="calc-btn" data-subject="${id}" data-term="${term}" title="Calculate from components">${calcButtonSVG}</button>` : '';
+        
+        subjectDiv.innerHTML = `
+            <label><input type="text" class="grade-input" placeholder="${subjectName}" value="${subjectName}" style="text-align: left; width: 100%;"></label>
+            <div class="grade-input-wrapper">
+                <input type="number" class="grade-input prelim" data-field="prelim-${id}" placeholder="0" min="0" max="100" step="0.01" value="${grades.prelim}" onchange="handleManualEdit(this, ${id}); calculateGWA(${id})" oninput="validateGrade(this); calculateGWA(${id})">
+                ${createCalcButton('prelim')}
+            </div>
+            <div class="grade-input-wrapper">
+                <input type="number" class="grade-input midterm" data-field="midterm-${id}" placeholder="0" min="0" max="100" step="0.01" value="${grades.midterm}" onchange="handleManualEdit(this, ${id}); calculateGWA(${id})" oninput="validateGrade(this); calculateGWA(${id})">
+                ${createCalcButton('midterm')}
+            </div>
+            <div class="grade-input-wrapper">
+                <input type="number" class="grade-input prefinals" data-field="prefinals-${id}" placeholder="0" min="0" max="100" step="0.01" value="${grades.prefinals}" onchange="handleManualEdit(this, ${id}); calculateGWA(${id})" oninput="validateGrade(this); calculateGWA(${id})">
+                ${createCalcButton('prefinals')}
+            </div>
+            <div class="grade-input-wrapper">
+                <input type="number" class="grade-input finals" data-field="finals-${id}" placeholder="0" min="0" max="100" step="0.01" value="${grades.finals}" onchange="handleManualEdit(this, ${id}); calculateGWA(${id})" oninput="validateGrade(this); calculateGWA(${id})">
+                ${createCalcButton('finals')}
+            </div>
+            <div class="result-box" id="gwa-${id}">-</div>
+            <div class="result-box" id="need-${id}" style="display: none;">-</div>
+            ${deleteButton}
+        `;
+        
+        container.appendChild(subjectDiv);
+        
+        // Attach event listeners to calc buttons
+        if (settings.componentBreakdown) {
+            attachCalcButtonListeners(subjectDiv);
+        }
+        
+        calculateGWA(id);
+    });
+    calculateOverallGWA();
 }
 
 function closeSettings() {
     document.getElementById('settings-overlay').style.display = 'none';
     document.getElementById('settings-drawer').style.display = 'none';
+}
+
+function resetToDefault() {
+    Swal.fire({
+        title: 'Reset to Default?',
+        text: "This will restore all settings to their default values.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#2563eb',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, reset!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Reset to default settings
+            document.getElementById('w-prelim').value = 20;
+            document.getElementById('w-midterm').value = 20;
+            document.getElementById('w-prefinals').value = 20;
+            document.getElementById('w-finals').value = 40;
+            document.getElementById('passing-grade').value = 59.50;
+            document.getElementById('custom-formula').value = '';
+            document.getElementById('requirement-toggle').checked = false;
+            document.getElementById('component-toggle').checked = false;
+            document.getElementById('w-performance').value = 40;
+            document.getElementById('w-activities').value = 30;
+            document.getElementById('w-exam').value = 30;
+            document.getElementById('component-weights').style.display = 'none';
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Reset Complete!',
+                text: 'All settings have been restored to default values. Click Save to apply.',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+    });
 }
 
 function saveSettings() {
@@ -546,6 +897,28 @@ function saveSettings() {
         return;
     }
     
+    const componentEnabled = document.getElementById('component-toggle').checked;
+    
+    // Validate component weights if enabled
+    if (componentEnabled) {
+        const perf = parseFloat(document.getElementById('w-performance').value) || 0;
+        const act = parseFloat(document.getElementById('w-activities').value) || 0;
+        const exam = parseFloat(document.getElementById('w-exam').value) || 0;
+        const compSum = perf + act + exam;
+        
+        if (compSum !== 100) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Component Weights',
+                text: `Component weights must sum to 100. Current sum: ${compSum}`,
+                confirmButtonColor: '#ef4444'
+            });
+            return;
+        }
+        
+        settings.componentWeights = { performance: perf, activities: act, exam: exam };
+    }
+    
     const pass = parseFloat(document.getElementById('passing-grade').value);
     const customFormula = document.getElementById('custom-formula').value.trim();
     const requirementEnabled = document.getElementById('requirement-toggle').checked;
@@ -555,19 +928,18 @@ function saveSettings() {
         passingGrade: isNaN(pass) ? 59.5 : pass,
         requirementEnabled: requirementEnabled,
         customFormula: customFormula,
-        theme: settings.theme
+        theme: settings.theme,
+        componentBreakdown: componentEnabled,
+        componentWeights: settings.componentWeights
     };
     
     saveSettingsToStorage();
     updateLabels();
     updateNeededHeader();
     
-    const rows = document.querySelectorAll('.subject-row');
-    rows.forEach(row => {
-        const id = parseInt(row.id.split('-')[1]);
-        calculateGWA(id);
-    });
-    calculateOverallGWA();
+    // Refresh all subjects to show/hide calc buttons
+    refreshAllSubjects();
+    
     closeSettings();
     
     Swal.fire({

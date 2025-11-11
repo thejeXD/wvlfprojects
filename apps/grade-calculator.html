@@ -170,9 +170,14 @@
     <div id="settings-overlay" class="overlay" onclick="closeSettings()" style="display:none;"></div>
     <div id="settings-drawer" class="settings-drawer" style="display:none;">
         <div class="settings-header">
-            <div class="settings-title">Settings</div>
+            <div class="settings-title-wrapper">
+                <div class="settings-title">Settings</div>
+                <div class="settings-description">Adjust grades, weights, and other preferences here.</div>
+            </div>
             <button class="close-settings" onclick="closeSettings()">×</button>
         </div>
+
+        <!-- Scrollable content -->
         <div class="settings-content">
             <div class="settings-section">
                 <div class="section-title">Weights (%)</div>
@@ -184,15 +189,38 @@
                 </div>
                 <div class="hint">Weights must sum to 100.</div>
             </div>
+
             <div class="settings-section">
                 <div class="section-title">Passing Grade</div>
                 <input id="passing-grade" type="number" min="0" max="100" step="0.01" value="59.50">
             </div>
+
+            <div class="settings-section">
+                <div class="section-title">Component Breakdown</div>
+                <label class="toggle">
+                    <input id="component-toggle" type="checkbox">
+                    <span>Enable component breakdown calculator</span>
+                </label>
+                <div id="component-weights" style="margin-top: 12px; display: none;">
+                    <div class="weights-grid">
+                        <label>Performance Task <input id="w-performance" type="number" min="0" max="100" step="1" value="40"></label>
+                        <label>Acts/Quizzes <input id="w-activities" type="number" min="0" max="100" step="1" value="30"></label>
+                        <label>Exam <input id="w-exam" type="number" min="0" max="100" step="1" value="30"></label>
+                    </div>
+                    <div class="hint">Component weights must sum to 100.</div>
+                </div>
+            </div>
+
             <div class="settings-section">
                 <div class="section-title">Custom Formula</div>
-                <input id="custom-formula" type="text" placeholder="GWA = (Prelim × 0.20) + (Midterm × 0.20) + (Pre-Finals × 0.20) + (Finals × 0.40)" style="width: 100%; padding: 8px; border: 1px solid #d0d7de; border-radius: 6px;">
+                <input id="custom-formula" type="text"
+                    placeholder="GWA = (Prelim × 0.20) + (Midterm × 0.20) + (Pre-Finals × 0.20) + (Finals × 0.40)"
+                    class="grade-input"
+                    style="width: 100%;">
                 <small>Use {prelim}, {midterm}, {prefinals}, {finals} as placeholders. Leave empty to use default formula.</small>
             </div>
+
+
             <div class="settings-section">
                 <label class="toggle">
                     <input id="requirement-toggle" type="checkbox">
@@ -200,8 +228,47 @@
                 </label>
             </div>
         </div>
+
+        <!-- Footer -->
         <div class="settings-footer">
             <button class="action-btn save-settings" onclick="saveSettings()">Save</button>
+        </div>
+    </div>
+
+
+    <!-- Component Breakdown Drawer -->
+    <div id="component-overlay" class="overlay" onclick="closeComponentDrawer()" style="display:none;"></div>
+    <div id="component-drawer" class="settings-drawer" style="display:none;">
+        <div class="settings-header">
+            <div class="settings-title" id="component-drawer-title">Calculate Grade</div>
+            <button class="close-settings" onclick="closeComponentDrawer()">×</button>
+        </div>
+        <div class="settings-content">
+            <div class="settings-section">
+                <div class="section-title">Performance Task (<span id="comp-perf-weight">40%</span>)</div>
+                <div id="performance-tasks-container"></div>
+                <button class="add-component-btn" onclick="addComponentField('performance')">+ Add Performance Task</button>
+            </div>
+            
+            <div class="settings-section">
+                <div class="section-title">Activities/Quizzes (<span id="comp-act-weight">30%</span>)</div>
+                <div id="activities-container"></div>
+                <button class="add-component-btn" onclick="addComponentField('activities')">+ Add Acts/Quiz</button>
+            </div>
+            
+            <div class="settings-section">
+                <div class="section-title">Exam (<span id="comp-exam-weight">30%</span>)</div>
+                <div id="exam-container"></div>
+                <button class="add-component-btn" onclick="addComponentField('exam')">+ Add Exam</button>
+            </div>
+            
+            <div class="component-result">
+                <strong>Calculated Grade:</strong>
+                <span id="component-calculated-grade">0.00</span>
+            </div>
+        </div>
+        <div class="settings-footer">
+            <button class="action-btn save-settings" onclick="applyComponentGrade()">Apply Grade</button>
         </div>
     </div>
 
