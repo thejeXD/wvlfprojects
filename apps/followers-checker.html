@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Followers Checker - Text Comparison</title>
+    <title>Followers Checker - Instagram</title>
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/followers-checker.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -12,7 +12,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-brand">
-                <a href="../index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
+                <a href="index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 10px;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="19" y1="12" x2="5" y2="12"></line>
                         <polyline points="12 19 5 12 12 5"></polyline>
@@ -33,7 +33,7 @@
         <div class="card header-card">
             <div class="card-header">
                 <div class="card-title">Instagram Followers Checker</div>
-                <div class="card-subtitle">Find out who's not following you back</div>
+                <div class="card-subtitle">Find who you follow but they don't follow you back</div>
             </div>
         </div>
 
@@ -55,7 +55,18 @@
                 <textarea 
                     id="following-input" 
                     class="text-input" 
-                    placeholder="Paste your following list here...&#10;&#10;Example:&#10;username1&#10;username2&#10;username3&#10;&#10;One username per line"
+                    placeholder="Paste your following list here...
+
+Automatically handles Instagram export format:
+• URLs (instagram.com/_u/username)
+• Plain usernames
+• Dates and timestamps will be removed
+
+Example:
+https://www.instagram.com/_u/john_doe
+Aug 27, 2023 5:06 pm
+jane_smith
+Sep 15, 2024 3:30 pm"
                     spellcheck="false"
                 ></textarea>
                 <div class="input-footer">
@@ -93,7 +104,17 @@
                 <textarea 
                     id="followers-input" 
                     class="text-input" 
-                    placeholder="Paste your followers list here...&#10;&#10;Example:&#10;username1&#10;username2&#10;username3&#10;&#10;One username per line"
+                    placeholder="Paste your followers list here...
+
+Automatically handles Instagram export format:
+• Plain usernames
+• Dates and timestamps will be removed
+
+Example:
+esnoopcy
+Dec 06, 2024 11:47 pm
+mike_johnson
+Nov 20, 2024 2:15 am"
                     spellcheck="false"
                 ></textarea>
                 <div class="input-footer">
@@ -115,6 +136,47 @@
             </div>
         </div>
 
+        <!-- Settings Section -->
+        <div class="card settings-card">
+            <div class="settings-header">
+                <div class="settings-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 1v6m0 6v6m0-12l-5.5 3m5.5 6l-5.5-3m5.5-6l5.5 3m-5.5 6l5.5-3"></path>
+                    </svg>
+                    Settings
+                </div>
+            </div>
+            <div class="settings-content">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <label class="setting-label">
+                            <input type="checkbox" id="fetch-followers-toggle" onchange="toggleFollowersFetch()">
+                            <span>Fetch Follower Counts</span>
+                        </label>
+                        <p class="setting-description">Show how many followers each user has (slower but more info)</p>
+                    </div>
+                </div>
+                
+                <div class="setting-item" id="influencer-setting" style="display: none;">
+                    <div class="setting-info">
+                        <label class="setting-label">
+                            <input type="checkbox" id="influencer-filter-toggle" onchange="toggleInfluencerFilter()">
+                            <span>Highlight Influencers</span>
+                        </label>
+                        <p class="setting-description">Mark accounts with many followers</p>
+                    </div>
+                    <div class="influencer-threshold" id="influencer-threshold" style="display: none;">
+                        <label class="threshold-label">Minimum followers:</label>
+                        <div class="threshold-input-group">
+                            <input type="number" id="influencer-min" value="45000" min="1000" step="1000" class="threshold-input">
+                            <span class="threshold-suffix">followers</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Compare Button -->
         <div class="compare-section">
             <button class="compare-btn" onclick="compareUsers()">
@@ -126,12 +188,34 @@
                 </svg>
                 Compare Lists
             </button>
+            <div class="compare-note" id="fetch-warning" style="display: none;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                Fetching follower counts may take a while for large lists
+            </div>
         </div>
 
         <!-- Results Section -->
         <div id="results-section" style="display: none;">
             <!-- Stats Cards -->
             <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--danger-color);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">You Follow, They Don't</div>
+                        <div class="stat-value" id="not-following-back-count">0</div>
+                    </div>
+                </div>
+
                 <div class="stat-card">
                     <div class="stat-icon" style="background: rgba(37, 99, 235, 0.1); color: var(--accent-color);">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -147,20 +231,6 @@
                 </div>
 
                 <div class="stat-card">
-                    <div class="stat-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--danger-color);">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="8.5" cy="7" r="4"></circle>
-                            <line x1="23" y1="11" x2="17" y2="11"></line>
-                        </svg>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-label">Not Following Back</div>
-                        <div class="stat-value" id="not-following-back-count">0</div>
-                    </div>
-                </div>
-
-                <div class="stat-card">
                     <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning-color);">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -170,7 +240,7 @@
                         </svg>
                     </div>
                     <div class="stat-content">
-                        <div class="stat-label">Not Following You</div>
+                        <div class="stat-label">They Follow, You Don't</div>
                         <div class="stat-value" id="not-following-you-count">0</div>
                     </div>
                 </div>
@@ -181,13 +251,13 @@
                 <div class="results-header">
                     <div class="results-tabs">
                         <button class="tab-btn active" onclick="showTab('not-following-back')" id="tab-not-following-back">
-                            Not Following Back
-                        </button>
-                        <button class="tab-btn" onclick="showTab('not-following-you')" id="tab-not-following-you">
-                            Not Following You
+                            ❌ They Don't Follow Back
                         </button>
                         <button class="tab-btn" onclick="showTab('mutual')" id="tab-mutual">
-                            Mutual
+                            ✅ Mutual
+                        </button>
+                        <button class="tab-btn" onclick="showTab('not-following-you')" id="tab-not-following-you">
+                            ⚠️ You Don't Follow
                         </button>
                     </div>
                     <div class="results-actions">
@@ -196,7 +266,7 @@
                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                             </svg>
-                            Copy List
+                            Copy
                         </button>
                         <button class="action-btn secondary" onclick="downloadList()">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -220,16 +290,6 @@
                         <div class="user-list" id="not-following-back-list"></div>
                     </div>
 
-                    <div id="not-following-you-content" class="tab-content">
-                        <div class="empty-state" id="empty-not-following-you">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                            <p>You're following all your followers! 🎉</p>
-                        </div>
-                        <div class="user-list" id="not-following-you-list"></div>
-                    </div>
-
                     <div id="mutual-content" class="tab-content">
                         <div class="empty-state" id="empty-mutual">
                             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -240,6 +300,16 @@
                             <p>No mutual followers found</p>
                         </div>
                         <div class="user-list" id="mutual-list"></div>
+                    </div>
+
+                    <div id="not-following-you-content" class="tab-content">
+                        <div class="empty-state" id="empty-not-following-you">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <p>You're following all your followers! 🎉</p>
+                        </div>
+                        <div class="user-list" id="not-following-you-list"></div>
                     </div>
                 </div>
             </div>
@@ -259,8 +329,8 @@
                             <li>Go to Instagram Settings → Security → Download Data</li>
                             <li>Request a download of your data</li>
                             <li>Once received, extract the ZIP file</li>
-                            <li>Open the followers.json and following.json files</li>
-                            <li>Copy the usernames from these files and paste them here</li>
+                            <li>Open the <strong>following.html</strong> and <strong>followers.html</strong> files</li>
+                            <li>Copy everything and paste here - dates and URLs will be automatically removed!</li>
                         </ol>
                     </div>
                 </div>

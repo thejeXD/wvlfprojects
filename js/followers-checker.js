@@ -43,12 +43,59 @@ const followersCount = document.getElementById('followers-count');
 followingInput.addEventListener('input', () => updateCount('following'));
 followersInput.addEventListener('input', () => updateCount('followers'));
 
+function parseUsernames(text) {
+    if (!text || !text.trim()) return [];
+    
+    const lines = text.trim().split('\n');
+    const usernames = [];
+    
+    // Regular expressions for different patterns
+    const urlPattern = /instagram\.com\/_u\/([a-zA-Z0-9._]+)/;
+    const datePattern = /^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+\d{1,2},\s+\d{4}\s+\d{1,2}:\d{2}\s+(am|pm)$/i;
+    const usernamePattern = /^[a-zA-Z0-9._]+$/;
+    
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        
+        // Skip empty lines
+        if (!line) continue;
+        
+        // Skip date/timestamp lines
+        if (datePattern.test(line)) continue;
+        
+        // Extract username from Instagram URL
+        const urlMatch = line.match(urlPattern);
+        if (urlMatch) {
+            usernames.push(urlMatch[1].toLowerCase());
+            continue;
+        }
+        
+        // Skip full URLs without username pattern
+        if (line.includes('instagram.com') || line.includes('http://') || line.includes('https://')) {
+            continue;
+        }
+        
+        // Skip obvious non-username patterns (numbers that look like times/dates)
+        if (/^\d+$/.test(line)) continue;
+        
+        // Check if it's a valid username
+        if (usernamePattern.test(line)) {
+            // Remove @ if present
+            const username = line.startsWith('@') ? line.substring(1) : line;
+            usernames.push(username.toLowerCase());
+        }
+    }
+    
+    // Remove duplicates while preserving order
+    return [...new Set(usernames)];
+}
+
 function updateCount(type) {
     const input = type === 'following' ? followingInput : followersInput;
     const counter = type === 'following' ? followingCount : followersCount;
     
-    const lines = input.value.trim().split('\n').filter(line => line.trim() !== '');
-    counter.textContent = lines.length;
+    const usernames = parseUsernames(input.value);
+    counter.textContent = usernames.length;
 }
 
 function clearInput(type) {
@@ -97,12 +144,158 @@ let comparisonResults = {
 };
 
 let currentTab = 'not-following-back';
+let followerCounts = {}; // Store follower counts
+let fetchFollowersEnabled = false;
+let influencerFilterEnabled = false;
+let influencerMinimum = 45000;
 
-function parseUsernames(text) {
-    return text.trim()
-        .split('\n')
-        .map(line => line.trim().toLowerCase())
-        .filter(line => line !== '' && !line.startsWith('#') && !line.startsWith('//'));
+// Settings functions
+function toggleFollowersFetch() {
+    fetchFollowersEnabled = document.getElementById('fetch-followers-toggle').checked;
+    const influencerSetting = document.getElementById('influencer-setting');
+    const fetchWarning = document.getElementById('fetch-warning');
+    
+    if (fetchFollowersEnabled) {
+        influencerSetting.style.display = 'block';
+        fetchWarning.style.display = 'flex';
+    } else {
+        influencerSetting.style.display = 'none';
+        fetchWarning.style.display = 'none';
+        document.getElementById('influencer-filter-toggle').checked = false;
+        influencerFilterEnabled = false;
+        document.getElementById('influencer-threshold').style.display = 'none';
+    }
+}
+
+function toggleInfluencerFilter() {
+    influencerFilterEnabled = document.getElementById('influencer-filter-toggle').checked;
+    const threshold = document.getElementById('influencer-threshold');
+    
+    if (influencerFilterEnabled) {
+        threshold.style.display = 'block';
+        influencerMinimum = parseInt(document.getElementById('influencer-min').value) || 45000;
+    } else {
+        threshold.style.display = 'none';
+    }
+}
+
+// Update influencer minimum when input changes
+document.addEventListener('DOMContentLoaded', () => {
+    const influencerMinInput = document.getElementById('influencer-min');
+    if (influencerMinInput) {
+        influencerMinInput.addEventListener('change', (e) => {
+            influencerMinimum = parseInt(e.target.value) || 45000;
+        });
+    }
+});
+
+// Fetch follower count for a username (using Instagram's public API)
+async function fetchFollowerCount(username) {
+    try {
+        // Try multiple methods to get follower count
+        
+        // Method 1: Try Instagram's public API endpoint
+        const response = await fetch(`https://www.instagram.com/api/v1/users/web_profile_info/?username=${username}`, {
+            headers: {
+                'x-ig-app-id': '936619743392459'
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            return data?.data?.user?.edge_followed_by?.count || null;
+        }
+        
+        // Method 2: Fallback - scrape from public page
+        const pageResponse = await fetch(`https://www.instagram.com/${username}/?__a=1&__d=dis`);
+        if (pageResponse.ok) {
+            const pageData = await pageResponse.json();
+            return pageData?.graphql?.user?.edge_followed_by?.count || 
+                   pageData?.user?.edge_followed_by?.count || null;
+        }
+        
+        return null;
+    } catch (error) {
+        console.error(`Error fetching follower count for ${username}:`, error);
+        return null;
+    }
+}
+
+// Format follower count for display
+function formatFollowerCount(count) {
+    if (count === null) return 'N/A';
+    if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
+    if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
+    return count.toString();
+}
+
+// Fetch follower counts for all users with rate limiting
+async function fetchAllFollowerCounts(usernames) {
+    followerCounts = {};
+    const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+    
+    let completed = 0;
+    const total = usernames.length;
+    
+    // Update progress
+    const updateProgress = () => {
+        const progressText = `Fetching follower counts... ${completed}/${total}`;
+        Swal.update({
+            html: `
+                <div style="text-align: center;">
+                    <div style="margin-bottom: 1rem;">
+                        <div style="width: 100%; height: 8px; background: #e9ecef; border-radius: 4px; overflow: hidden;">
+                            <div style="width: ${(completed/total)*100}%; height: 100%; background: #2563eb; transition: width 0.3s;"></div>
+                        </div>
+                    </div>
+                    <p style="margin: 0; color: #6c757d;">${progressText}</p>
+                    <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #adb5bd;">This may take a few minutes...</p>
+                </div>
+            `
+        });
+    };
+    
+    // Show loading dialog
+    Swal.fire({
+        title: 'Fetching Follower Counts',
+        html: `
+            <div style="text-align: center;">
+                <div style="margin-bottom: 1rem;">
+                    <div style="width: 100%; height: 8px; background: #e9ecef; border-radius: 4px; overflow: hidden;">
+                        <div style="width: 0%; height: 100%; background: #2563eb; transition: width 0.3s;"></div>
+                    </div>
+                </div>
+                <p style="margin: 0; color: #6c757d;">Fetching follower counts... 0/${total}</p>
+                <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: #adb5bd;">This may take a few minutes...</p>
+            </div>
+        `,
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+    
+    // Fetch in batches to avoid rate limiting
+    const batchSize = 5;
+    for (let i = 0; i < usernames.length; i += batchSize) {
+        const batch = usernames.slice(i, i + batchSize);
+        const promises = batch.map(async (username) => {
+            const count = await fetchFollowerCount(username);
+            followerCounts[username] = count;
+            completed++;
+            updateProgress();
+        });
+        
+        await Promise.all(promises);
+        
+        // Wait between batches to avoid rate limiting
+        if (i + batchSize < usernames.length) {
+            await delay(2000); // 2 second delay between batches
+        }
+    }
+    
+    Swal.close();
 }
 
 function compareUsers() {
@@ -142,13 +335,26 @@ function compareUsers() {
     const following = parseUsernames(followingText);
     const followers = parseUsernames(followersText);
     
+    if (following.length === 0 && followers.length === 0) {
+        Swal.fire({
+            icon: 'error',
+            title: 'No Usernames Found',
+            text: 'Could not find any valid usernames. Please check your input format.',
+            confirmButtonColor: '#2563eb'
+        });
+        return;
+    }
+    
     // Remove duplicates
     const followingSet = new Set(following);
     const followersSet = new Set(followers);
     
     // Calculate results
-    comparisonResults.mutual = [...followingSet].filter(user => followersSet.has(user));
+    // People YOU follow but they DON'T follow you back (main focus!)
     comparisonResults.notFollowingBack = [...followingSet].filter(user => !followersSet.has(user));
+    // Mutual followers
+    comparisonResults.mutual = [...followingSet].filter(user => followersSet.has(user));
+    // People who follow YOU but you DON'T follow them back
     comparisonResults.notFollowingYou = [...followersSet].filter(user => !followingSet.has(user));
     
     // Sort alphabetically
@@ -179,15 +385,26 @@ function displayResults() {
         resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
     
-    // Show success message
+    // Show success message with emphasis on "not following back"
+    const notFollowingBackCount = comparisonResults.notFollowingBack.length;
+    const message = notFollowingBackCount > 0 
+        ? `Found ${notFollowingBackCount} ${notFollowingBackCount === 1 ? 'person' : 'people'} you follow who don't follow you back!`
+        : 'Great news! Everyone you follow follows you back! 🎉';
+    
     Swal.fire({
-        icon: 'success',
+        icon: notFollowingBackCount > 0 ? 'info' : 'success',
         title: 'Comparison Complete!',
         html: `
             <div style="text-align: left; margin: 20px 0;">
-                <p><strong>Mutual Followers:</strong> ${comparisonResults.mutual.length}</p>
-                <p><strong>Not Following Back:</strong> ${comparisonResults.notFollowingBack.length}</p>
-                <p><strong>Not Following You:</strong> ${comparisonResults.notFollowingYou.length}</p>
+                <p style="font-size: 16px; margin-bottom: 15px; font-weight: 600; color: #ef4444;">
+                    ❌ You Follow, They Don't: ${comparisonResults.notFollowingBack.length}
+                </p>
+                <p style="font-size: 14px; margin-bottom: 10px;">
+                    ✅ Mutual Followers: ${comparisonResults.mutual.length}
+                </p>
+                <p style="font-size: 14px;">
+                    ⚠️ They Follow, You Don't: ${comparisonResults.notFollowingYou.length}
+                </p>
             </div>
         `,
         confirmButtonColor: '#2563eb'
@@ -334,8 +551,8 @@ function downloadList() {
     const a = document.createElement('a');
     
     const tabNames = {
-        'not-following-back': 'not_following_back',
-        'not-following-you': 'not_following_you',
+        'not-following-back': 'you_follow_they_dont',
+        'not-following-you': 'they_follow_you_dont',
         'mutual': 'mutual_followers'
     };
     
@@ -389,19 +606,13 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// ==================== SMOOTH SCROLL ====================
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    });
-});
-
 // ==================== INITIALIZATION ====================
 console.log('Instagram Followers Checker loaded successfully!');
 console.log('Keyboard shortcuts:');
 console.log('  - Ctrl/Cmd + Enter: Compare lists');
 console.log('  - Ctrl/Cmd + K: Clear all inputs');
+console.log('');
+console.log('Supports Instagram export format:');
+console.log('  - URLs: https://www.instagram.com/_u/username');
+console.log('  - Plain usernames');
+console.log('  - Dates/timestamps automatically removed');
