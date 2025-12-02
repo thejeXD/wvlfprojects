@@ -1,0 +1,138 @@
+/* ==================== DATE PREDICTOR SPECIFIC STYLES ==================== */
+
+.date-predictor-section {
+    padding: var(--spacing-xl) var(--spacing-md);
+    text-align: center;
+}
+
+.page-title {
+    font-size: var(--font-size-4xl);
+    font-weight: 800;
+    margin-bottom: var(--spacing-sm);
+}
+
+.page-subtitle {
+    font-size: var(--font-size-xl);
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-xl);
+}
+
+.predictor-card {
+    max-width: 600px;
+    margin: 0 auto var(--spacing-xl) auto;
+    background: var(--bg-secondary);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    text-align: left;
+}
+
+.predictor-card .form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.predictor-card .form-row {
+    display: flex;
+    gap: var(--spacing-md);
+}
+
+.predictor-card .form-row .form-group {
+    flex: 1;
+}
+
+.predictor-card label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-primary);
+}
+
+.predictor-card input[type="date"],
+.predictor-card input[type="number"],
+.predictor-card select {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: var(--font-size-base);
+    transition: border-color 0.2s ease;
+}
+
+.predictor-card button {
+    width: 100%;
+    margin-top: var(--spacing-md);
+}
+
+/* ==================== HACKING CONSOLE STYLES ==================== */
+
+.console-output-area {
+    max-width: 700px;
+    margin: var(--spacing-xl) auto;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    /* Neon Green Text on Dark Console */
+    background: #1e1e1e; 
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3); /* Green glow effect */
+}
+
+.console-header {
+    background: #000000;
+    color: #00ff00; /* Neon green */
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-family: monospace;
+    font-size: var(--font-size-sm);
+    border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+}
+
+.console-body {
+    padding: var(--spacing-md);
+    text-align: left;
+    height: 250px;
+    overflow-y: auto;
+    color: #00ff00; /* Neon green text */
+    background: #1e1e1e;
+    font-family: 'Courier New', monospace;
+    font-size: var(--font-size-base);
+    white-space: pre-wrap; /* Preserve formatting */
+}
+
+/* Specific colors for the "code" look */
+.console-body .keyword { color: #f92672; } /* Magenta/Keyword */
+.console-body .variable { color: #66d9ef; } /* Cyan/Variable */
+.console-body .string { color: #e6db74; } /* Yellow/String */
+.console-body .function { color: #a6e22e; } /* Green/Function */
+.console-body .number { color: #ae81ff; } /* Purple/Number */
+
+
+/* FINAL RESULT DISPLAY */
+.result-display {
+    max-width: 700px;
+    margin: 0 auto;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    text-align: left;
+    padding: var(--spacing-md);
+}
+
+.result-label {
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+    font-size: var(--font-size-lg);
+}
+
+#finalResult {
+    font-family: monospace;
+    font-size: var(--font-size-2xl);
+    color: var(--success-color); /* Bright green for the final date */
+    padding-left: var(--spacing-sm);
+}
+
+/* Dark Theme Adjustments */
+body.dark-theme .predictor-card {
+    background: var(--bg-tertiary);
+}
