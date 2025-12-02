@@ -28,7 +28,7 @@
     --spacing-xl: 3rem;
     
     /* Typography */
-    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     --font-size-sm: 0.875rem;
     --font-size-base: 1rem;
     --font-size-lg: 1.125rem;
@@ -38,16 +38,18 @@
     --font-size-4xl: 2.5rem;
     
     /* Border Radius */
-    --radius-sm: 0.375rem;
-    --radius-md: 0.5rem;
-    --radius-lg: 0.75rem;
-    --radius-xl: 1rem;
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.25rem;
     
     /* Shadows */
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 6px 10px -2px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 12px 20px -5px rgba(0, 0, 0, 0.15);
+
+
+    --accent-color-rgb: 37, 99, 235;
 }
 
 body.dark-theme {
@@ -67,6 +69,7 @@ body {
     background: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
+    font-weight: 400;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -99,6 +102,11 @@ body.dark-theme .navbar {
     font-weight: 700;
     color: var(--text-primary);
     letter-spacing: -0.5px;
+}
+
+.nav-brand-link {
+    text-decoration: none; /* Removes underline */
+    color: inherit;      /* Ensures the text color is inherited from the parent or brand style */
 }
 
 .nav-links {
@@ -138,11 +146,12 @@ body.dark-theme .navbar {
     color: var(--accent-color);
 }
 
+
 /* ==================== HERO SECTION ==================== */
 .hero {
     padding: var(--spacing-xl) var(--spacing-md);
     text-align: center;
-    background: var(--bg-secondary);
+    background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
     min-height: 60vh;
     display: flex;
     align-items: center;
@@ -155,11 +164,11 @@ body.dark-theme .navbar {
 }
 
 .hero-title {
+    font-weight: 900; 
+    letter-spacing: -1.5px;
     font-size: var(--font-size-4xl);
-    font-weight: 800;
     color: var(--text-primary);
     margin-bottom: var(--spacing-sm);
-    letter-spacing: -1px;
 }
 
 .hero-subtitle {
@@ -169,27 +178,27 @@ body.dark-theme .navbar {
 }
 
 .cta-button {
-    display: inline-block;
-    padding: var(--spacing-sm) var(--spacing-lg);
-    background: var(--accent-color);
+    padding: 0.75rem 2rem;
+    background: linear-gradient(45deg, var(--accent-color) 0%, var(--accent-hover) 100%);
     color: white;
-    text-decoration: none;
-    border-radius: var(--radius-lg);
-    font-weight: 600;
+    border-radius: 9999px; 
+    font-weight: 700; 
+    display: inline-block;
+    text-decoration: none; 
     transition: all 0.2s ease;
     box-shadow: var(--shadow-md);
 }
 
 .cta-button:hover {
     background: var(--accent-hover);
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow: var(--shadow-lg);
 }
 
 /* ==================== APPS SECTION ==================== */
 .apps-section {
     padding: var(--spacing-xl) var(--spacing-md);
-    background: var(--bg-primary);
+    min-height: 80vh;
 }
 
 .container {
@@ -210,22 +219,44 @@ body.dark-theme .navbar {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: var(--spacing-lg);
     margin-top: var(--spacing-lg);
+    /* Grid items should stretch vertically by default in a grid layout */
+    align-items: stretch;
 }
 
+/* --- App Card Link Wrapper (New) --- */
+.app-card-link {
+    display: block; 
+    text-decoration: none; 
+    color: inherit; 
+    transition: transform 0.3s ease; 
+    /* CRITICAL FIX 1: Force link wrapper to fill entire grid cell height */
+    height: 100%; 
+}
+
+/* --- App Card Core Styles --- */
 .app-card {
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-xl);
-    padding: var(--spacing-lg);
-    transition: all 0.3s ease;
+    padding: var(--spacing-md);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     display: flex;
     flex-direction: column;
+    text-align: left; 
+    padding-top: var(--spacing-xl); 
+    position: relative;
+    transform: none; 
+    
+    /* CRITICAL FIX 2: Force card to fill entire link wrapper height */
+    height: 100%;
 }
 
-.app-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
+/* Hover effect moved to the link wrapper */
+.app-card-link:hover .app-card {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
     border-color: var(--accent-color);
+    background: color-mix(in srgb, var(--bg-secondary) 95%, var(--accent-hover) 5%);
 }
 
 .app-card.coming-soon {
@@ -233,111 +264,307 @@ body.dark-theme .navbar {
 }
 
 .app-icon {
-    width: 64px;
-    height: 64px;
-    background: var(--bg-tertiary);
-    border-radius: var(--radius-lg);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: var(--spacing-md);
-    color: var(--accent-color);
+    display: none;
 }
 
 .app-title {
-    font-size: var(--font-size-xl);
+    font-size: var(--font-size-xl); 
     font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
+    text-decoration: none !important;
 }
 
 .app-description {
     color: var(--text-secondary);
-    margin-bottom: var(--spacing-md);
-    flex-grow: 1;
+    margin-top: var(--spacing-xs); 
+    /* This flex-grow is critical: it pushes remaining content down */
+    flex-grow: 1; 
     line-height: 1.6;
+    text-decoration: none !important;
+    margin-bottom: var(--spacing-md); /* Added margin back for breathing room */
 }
 
+/* --- App Thumbnail --- */
+.app-thumbnail {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-md);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.3s ease-out;
+}
+
+.app-card-link:hover .app-thumbnail {
+    transform: scale(1.02);
+}
+
+/* --- App Tags (Genre Labels) --- */
 .app-tags {
+    position: relative; 
+    top: initial;
+    right: initial;
+    margin-top: var(--spacing-sm); 
+    margin-bottom: var(--spacing-sm);
     display: flex;
     gap: var(--spacing-xs);
-    margin-bottom: var(--spacing-md);
     flex-wrap: wrap;
+    z-index: 1;
 }
 
+/* Base Tag Style (Weakened to allow colorful classes to take priority) */
 .tag {
-    padding: 0.25rem 0.75rem;
-    background: var(--bg-tertiary);
-    color: var(--text-secondary);
-    border-radius: var(--radius-sm);
-    font-size: var(--font-size-sm);
-    font-weight: 500;
-}
-
-.app-actions {
-    display: flex;
-    gap: var(--spacing-sm);
-}
-
-.btn-primary,
-.btn-secondary {
-    flex: 1;
-    padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: var(--radius-md);
-    font-weight: 600;
-    text-align: center;
-    cursor: pointer;
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-sm); 
+    
+    /* FIX: Base style reset, allowing classes to define color/background */
+    background: transparent;
+    color: var(--text-tertiary); 
+    
+    font-size: 0.75rem; 
+    font-weight: 700;
+    border: 1px solid transparent; 
+    line-height: 1;
     transition: all 0.2s ease;
-    border: none;
-    text-decoration: none;
+    text-decoration: none !important; 
+}
+
+/* Hover state is handled by the specific tag color classes below */
+.app-card-link:hover .tag {
+    /* Reset base tag hover before applying specific colors below */
+    background: none; 
+    border-color: transparent;
+}
+
+
+/* --- COLOR DEFINITIONS (Matching Code Snippets) --- */
+/* 1. Keyword/Magenta Tags (e.g., Education) */
+.tag-keyword {
+    --tag-color: #f92672;
+    color: var(--tag-color);
+    background: rgba(249, 38, 114, 0.1);
+}
+.app-card-link:hover .tag-keyword {
+    background: rgba(249, 38, 114, 0.2);
+    border-color: var(--tag-color);
+    color: var(--tag-color);
+}
+
+/* 2. Function/Green Tags (e.g., Calculator) */
+.tag-func {
+    --tag-color: #a6e22e;
+    color: var(--tag-color);
+    background: rgba(166, 226, 46, 0.1);
+}
+.app-card-link:hover .tag-func {
+    background: rgba(166, 226, 46, 0.2);
+    border-color: var(--tag-color);
+    color: var(--tag-color);
+}
+
+/* 3. Variable/Cyan Tags (e.g., Fun) */
+.tag-var {
+    --tag-color: #66d9ef;
+    color: var(--tag-color);
+    background: rgba(102, 217, 239, 0.1);
+}
+.app-card-link:hover .tag-var {
+    background: rgba(102, 217, 239, 0.2);
+    border-color: var(--tag-color);
+    color: var(--tag-color);
+}
+
+/* 4. String/Yellow Tags (e.g., Utility) */
+.tag-string {
+    --tag-color: #e6db74;
+    color: var(--tag-color);
+    background: rgba(230, 219, 116, 0.1);
+}
+.app-card-link:hover .tag-string {
+    background: rgba(230, 219, 116, 0.2);
+    border-color: var(--tag-color);
+    color: var(--tag-color);
+}
+
+/* 5. Number/Purple Tags (e.g., Finance) */
+.tag-number {
+    --tag-color: #ae81ff;
+    color: var(--tag-color);
+    background: rgba(174, 129, 255, 0.1);
+}
+.app-card-link:hover .tag-number {
+    background: rgba(174, 129, 255, 0.2);
+    border-color: var(--tag-color);
+    color: var(--tag-color);
+}
+
+/* --- Info Tag/Tooltip --- */
+.info-tag-container {
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    cursor: pointer;
+    z-index: 10;
+}
+
+.info-tag {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: var(--text-secondary);
+    color: var(--bg-primary);
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 700;
+    transition: background 0.2s ease;
+    opacity: 0.6;
+}
+
+.info-tag-container:hover .info-tag {
+    background: var(--accent-color);
+    opacity: 1;
+}
+
+.info-tooltip {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 200px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--accent-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm);
+    box-shadow: var(--shadow-md);
+    color: var(--text-primary);
+    text-align: left;
+    font-size: var(--font-size-sm);
+    line-height: 1.4;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    z-index: 20;
+}
+
+.info-tooltip::after {
+    content: "";
+    position: absolute;
+    bottom: 100%; 
+    right: 15px;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent var(--accent-color) transparent;
+}
+
+
+.info-tag-container:hover .info-tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* ==================== BUTTON STYLES ==================== */
+.app-actions {
+    margin-top: auto;
+    padding-top: var(--spacing-md);
+}
+
+.btn-secondary {
+    padding: 0.5rem 1.5rem;
+    background: transparent;
+    color: var(--accent-color);
+    border: 2px solid var(--accent-color);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    transition: all 0.3s ease;
     display: inline-block;
 }
 
-.btn-primary {
+.btn-secondary:hover {
     background: var(--accent-color);
     color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-secondary:active {
+    transform: translateY(0);
+}
+
+/* Primary button style (for consistency) */
+.btn-primary {
+    padding: 0.5rem 1.5rem;
+    background: var(--accent-color);
+    color: white;
+    border: 2px solid var(--accent-color);
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-decoration: none;
 }
 
 .btn-primary:hover {
     background: var(--accent-hover);
+    border-color: var(--accent-hover);
     transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
-.btn-secondary {
-    background: transparent;
-    color: var(--text-secondary);
-    border: 1px solid var(--border-color);
-}
-
-.btn-secondary:hover {
-    background: var(--bg-tertiary);
-    border-color: var(--accent-color);
-    color: var(--accent-color);
+.btn-primary:active {
+    transform: translateY(0);
 }
 
 /* ==================== ABOUT SECTION ==================== */
 .about-section {
     padding: var(--spacing-xl) var(--spacing-md);
-    background: var(--bg-secondary);
+    background: var(--bg-secondary); /* Give it a different background for separation */
+    text-align: center; /* Center the title and overall block elements */
 }
 
 .about-content {
-    max-width: 800px;
-    margin: 0 auto;
-    text-align: center;
+    /* Set a max width so the text doesn't span too wide on large screens */
+    max-width: 900px; 
+    margin: 0 auto; /* This centers the block element itself */
 }
 
 .about-content p {
-    color: var(--text-secondary);
+    /* Apply text-align: center to the paragraphs for centering */
+    text-align: center;
     margin-bottom: var(--spacing-md);
+    line-height: 1.8;
     font-size: var(--font-size-lg);
+    color: var(--text-tertiary);
 }
 
+/* ==================== SYNTAX HIGHLIGHTING FOR PARAGRAPH ==================== */
 .about-content strong {
-    color: var(--text-primary);
+    font-weight: 700;
+    color: var(--accent-color);
 }
+.about-content mark {
+    background: none;
+    padding: 0;
+    font-weight: 600;
+    color: var(--text-primary);
+    transition: color 0.2s ease;
+}
+.about-content .var { color: #66d9ef; } 
+.about-content .string { color: #e6db74; } 
+.about-content .keyword { color: #f92672; } 
+.about-content .func { color: #a6e22e; } 
+.about-content .number { color: #ae81ff; } 
+.about-content mark:hover { text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); } 
+body.dark-theme .about-content mark:hover { text-shadow: 0 0 5px rgba(255, 255, 255, 0.7); } 
 
-.tech-stack {
+/* ==================== CODE SNIPPET STACK STYLES ==================== */
+.code-snippet-stack {
     display: flex;
     justify-content: center;
     gap: var(--spacing-sm);
@@ -345,14 +572,397 @@ body.dark-theme .navbar {
     margin-top: var(--spacing-lg);
 }
 
-.tech-badge {
-    padding: var(--spacing-xs) var(--spacing-md);
+.code-snippet {
     background: var(--bg-primary);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
+    padding: var(--spacing-xs) var(--spacing-md);
     font-size: var(--font-size-sm);
+    font-family: monospace;
+    font-weight: 500;
+    color: var(--text-primary);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.code-snippet:hover {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px rgba(var(--accent-color-rgb), 0.5);
+    transform: translateY(-2px);
+}
+
+.code-snippet .keyword { color: #f92672; } 
+.code-snippet .variable { color: #66d9ef; } 
+.code-snippet .operator { color: var(--text-primary); } 
+.code-snippet .string { color: #e6db74; } 
+.code-snippet .function { color: #a6e22e; } 
+.code-snippet .number { color: #ae81ff; } 
+.code-snippet .selector { color: #fd971f; } 
+.code-snippet .property { color: #f92672; }
+.code-snippet .value { color: #66d9ef; }
+.code-snippet .tag { color: #f92672; }
+.code-snippet .tag-name { color: #a6e22e; }
+.code-snippet .attribute { color: #66d9ef; }
+
+.code-snippet::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    opacity: 0;
+    z-index: 10;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.code-snippet:hover::after {
+    opacity: 1;
+    animation: codeFlash 0.5s linear infinite;
+}
+
+@keyframes codeFlash {
+    0% { background: rgba(var(--accent-color-rgb), 0.1); }
+    25% { background: rgba(var(--accent-color-rgb), 0.2); }
+    50% { background: rgba(var(--accent-color-rgb), 0.1); }
+    75% { background: rgba(var(--accent-color-rgb), 0.3); }
+    100% { background: rgba(var(--accent-color-rgb), 0.1); }
+}
+
+body.dark-theme .code-snippet {
+    background: var(--bg-tertiary);
+    border-color: var(--border-color);
+}
+
+/* ==================== GAME PREVIEW IMAGE TRACK ==================== */
+.game-previews-section {
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--border-color);
+}
+
+.game-previews-title {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    text-align: center;
+}
+
+.image-track {
+    display: flex;
+    gap: 4vmin;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, -0%);
+    cursor: grab;
+    width: max-content;
+    overflow-x: hidden;
+    padding: var(--spacing-sm) 0;
+}
+
+.track-image {
+    width: 30vmax;
+    height: 20vmax;
+    object-fit: cover;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    transition: filter 0.5s ease, transform 0.2s ease;
+    will-change: transform;
+}
+
+.track-image:hover {
+    filter: none;
+    transform: scale(1.05);
+    z-index: 10;
+}
+
+.image-track:not(:hover) .track-image {
+    filter: grayscale(100%) opacity(0.8);
+}
+
+.track-hint {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    margin-top: var(--spacing-md);
+    opacity: 0.7;
+}
+
+body.dark-theme .track-image {
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+
+/* ==================== CUSTOM IMAGE MODAL ==================== */
+.custom-modal {
+    position: fixed; 
+    z-index: 2000 !important;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); 
+    
+    /* Always display: flex for centering */
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    
+    /* Hide by default */
+    opacity: 0;
+    pointer-events: none;  /* Blocks all clicks when hidden */
+    transition: opacity 0.3s ease;
+}
+
+/* When modal is open */
+.custom-modal.open {
+    opacity: 1;
+    pointer-events: auto;  /* ✅ CRITICAL: Allow clicks when visible */
+}
+
+.modal-content {
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    
+    max-width: 900px; 
+    width: 90%;
+    max-height: 90vh;
+    margin: 20px; 
+    padding: var(--spacing-lg);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    overflow-y: auto;
+    
+    /* ✨ Pop-out animation */
+    transform: scale(0.7);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Animate modal content when opening */
+.custom-modal.open .modal-content {
+    transform: scale(1);
+}
+
+.close-btn {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-md);
+    font-size: var(--font-size-2xl);
+    font-weight: 300;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+    z-index: 2010;
+}
+
+.close-btn:hover {
+    color: var(--danger-color);
+    transform: rotate(90deg);  /* ✨ Spin on hover */
+}
+
+/* Rest of modal styles remain the same... */
+.modal-image-area {
+    width: 100%;
+    aspect-ratio: 30 / 20; 
+    overflow: hidden;
+    border-radius: var(--radius-md);
+}
+
+#modal-full-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.modal-details {
+    padding-top: var(--spacing-sm);
+    text-align: left;
+}
+
+#modal-name {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    margin-bottom: var(--spacing-xs);
+    color: var(--accent-color);
+}
+
+#modal-description {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-md);
+}
+
+#modal-button {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    background: var(--accent-color);
+    color: white;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.2s ease;
+}
+
+#modal-button:hover {
+    background: var(--accent-hover);
+}
+
+@media (max-width: 768px) {
+    .modal-content {
+        padding: var(--spacing-md);
+        width: 95%;
+    }
+    #modal-name {
+        font-size: var(--font-size-xl);
+    }
+}
+
+
+.library-section {
+    padding: var(--spacing-xl) var(--spacing-md);
+    min-height: 80vh;
+}
+
+.control-panel {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+#app-search, #tag-filter {
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: var(--font-size-base);
+    transition: border-color 0.2s ease;
+    min-width: 250px;
+}
+
+#app-search:focus, #tag-filter:focus {
+    border-color: var(--accent-color);
+    outline: none;
+}
+
+.no-results-message {
+    text-align: center;
+    font-size: var(--font-size-xl);
+    color: var(--text-secondary);
+    padding: var(--spacing-xl);
+}
+
+/* ==================== CONTACT SECTION ==================== */
+.contact-section {
+    padding: var(--spacing-xl) var(--spacing-md);
+    min-height: 80vh;
+    text-align: center;
+}
+
+.contact-subtitle {
+    font-size: var(--font-size-lg);
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-xl);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.contact-form-container {
+    max-width: 600px;
+    margin: 0 auto var(--spacing-xl) auto;
+    background: var(--bg-secondary);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.contact-form {
+    display: grid;
+    gap: var(--spacing-md);
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-primary);
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: var(--font-size-base);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(var(--accent-color-rgb), 0.2);
+    outline: none;
+}
+
+.form-submit-btn {
+    width: 100%;
+    margin-top: var(--spacing-sm);
+    /* Inherits cta-button styles */
+}
+
+/* --- Direct Links --- */
+.contact-links {
+    margin-top: var(--spacing-xl);
+}
+
+.contact-links p {
+    font-size: var(--font-size-lg);
+    color: var(--text-tertiary);
+    margin-bottom: var(--spacing-md);
+}
+
+.links-grid {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+.contact-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.5rem 1rem;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    text-decoration: none;
     font-weight: 600;
     color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.contact-link:hover {
+    background: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+    transform: translateY(-2px);
 }
 
 /* ==================== FOOTER ==================== */
@@ -411,10 +1021,6 @@ body.dark-theme .navbar {
     .apps-grid {
         grid-template-columns: 1fr;
     }
-    
-    .app-actions {
-        flex-direction: column;
-    }
 }
 
 @media (max-width: 480px) {
@@ -427,7 +1033,7 @@ body.dark-theme .navbar {
     }
 }
 
-/* ==================== SWEETALERT CUSTOM ==================== */
+/* ==================== SWEETALERT CUSTOM (Legacy) ==================== */
 .swal2-popup {
     border-radius: var(--radius-xl) !important;
 }
@@ -443,24 +1049,3 @@ body.dark-theme .navbar {
 body.dark-theme .swal2-popup {
     background: var(--bg-secondary) !important;
 }
-
-/* ==================== ANIMATIONS ==================== */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.app-card {
-    animation: fadeIn 0.5s ease-out;
-}
-
-.app-card:nth-child(1) { animation-delay: 0.1s; }
-.app-card:nth-child(2) { animation-delay: 0.2s; }
-.app-card:nth-child(3) { animation-delay: 0.3s; }
-.app-card:nth-child(4) { animation-delay: 0.4s; }

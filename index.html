@@ -1,241 +1,380 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wolf's Apps</title>
-    <link rel="stylesheet" href="css/main.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Wolf's Apps: Tools & Roblox Creations</title>
+
+    <link rel="canonical" href="https://wolfprojects.netlify.app/" />
+
+    <meta
+      name="description"
+      content="Simple, efficient web applications built by Wolf, including a Grade Calculator and unique Roblox game previews."
+    />
+
+    <meta
+      property="og:title"
+      content="Wolf's Student Apps & Game Dev Portfolio"
+    />
+    <meta
+      property="og:description"
+      content="A collection of simple, student-focused productivity tools and immersive Roblox game showcases. Built with HTML, CSS, & JS."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://wolfprojects.netlify.app/" />
+    <meta property="og:image" content="assets/logo.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Wolf's Student Tools & Portfolio" />
+    <meta
+      name="twitter:description"
+      content="Simple utility apps and Roblox experiences by Wolf. Explore my projects and start calculating your grades!"
+    />
+
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="assets/logo.png" />
+
+    <link rel="stylesheet" href="css/main.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-</head>
-<body>
+    <script src="js/main.js" defer></script>
+  </head>
+  <body>
     <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-brand">Wolf</div>
-            <div class="nav-links">
-                <a href="#apps">Apps</a>
-                <a href="#about">About</a>
-                <a href="https://github.com/thejeXD" target="_blank">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                    </svg>
-                </a>
-                <button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" id="theme-icon">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                    </svg>
-                </button>
-            </div>
+      <div class="nav-container">
+        <a href="#top" class="nav-brand-link">
+          <div class="nav-brand">Wolf</div>
+        </a>
+        <div class="nav-links">
+          <a href="#apps">Apps</a>
+          <a href="#about">About</a>
+          <a href="contact.html">Contact</a>
+          <a href="https://github.com/thejeXD" target="_blank">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+              />
+            </svg>
+          </a>
+          <button
+            class="theme-toggle"
+            onclick="toggleTheme()"
+            id="theme-toggle"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              id="theme-icon"
+            >
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
         </div>
+      </div>
     </nav>
 
     <header class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title">Welcome to My Apps</h1>
-            <p class="hero-subtitle">Simple tools built for students and productivity enthusiasts</p>
-            <a href="#apps" class="cta-button">Explore Apps</a>
-        </div>
+      <div class="hero-content">
+        <h1 class="hero-title">Welcome to My Apps</h1>
+        <p class="hero-subtitle">
+          Simple tools built for students and productivity enthusiasts
+        </p>
+        <a href="#apps" class="cta-button">Explore Apps</a>
+      </div>
     </header>
 
     <section id="apps" class="apps-section">
-        <div class="container">
-            <h2 class="section-title">My Applications</h2>
-            <div class="apps-grid">
-                
-               <!-- Grade Calculator App Card -->
+      <div class="container">
+        <h2 class="section-title">My Applications</h2>
+        <div class="apps-grid">
+          <a href="apps/grade-calculator.html" class="app-card-link">
             <div class="app-card">
-                <div class="app-icon">
-                <!-- Calculator Icon -->
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="4" y="2" width="16" height="20" rx="2" ry="2" />
-                    <line x1="8" y1="6" x2="16" y2="6" />
-                    <line x1="8" y1="10" x2="8" y2="10" />
-                    <line x1="12" y1="10" x2="12" y2="10" />
-                    <line x1="16" y1="10" x2="16" y2="10" />
-                    <line x1="8" y1="14" x2="8" y2="14" />
-                    <line x1="12" y1="14" x2="12" y2="14" />
-                    <line x1="16" y1="14" x2="16" y2="14" />
-                    <line x1="8" y1="18" x2="8" y2="18" />
-                    <line x1="12" y1="18" x2="12" y2="18" />
-                    <line x1="16" y1="18" x2="16" y2="18" />
-                </svg>
-                </div>
-                <h3 class="app-title">Grade Calculator</h3>
-                <p class="app-description">
-                Calculate your GWA, predict required grades, and track academic performance across multiple subjects.
-                </p>
-                <div class="app-tags">
-                <span class="tag">Education</span>
-                <span class="tag">Calculator</span>
-                </div>
-                <div class="app-actions">
-                <a href="apps/grade-calculator.html" class="btn-primary">Open App</a>
-                <button onclick="showAppInfo('grade-calculator')" class="btn-secondary">Learn More</button>
-                </div>
-            </div>
+              <img
+                src="assets/thumb-calculator.png"
+                alt="Grade Calculator Thumbnail"
+                class="app-thumbnail"
+              />
 
+              <div class="info-tag-container">
+                <div class="info-tag">i</div>
+                <div class="info-tooltip">
+                  A powerful tool to calculate GWA, predict required grades, and
+                  track academic performance across multiple subjects.
+                </div>
+              </div>
+
+              <h3 class="app-title">Grade Calculator</h3>
+              <p class="app-description">
+                Instantly analyze grades and predict required scores.
+              </p>
+
+              <div class="app-tags">
+                <span class="tag tag-keyword">Education</span>
+                <span class="tag tag-func">Calculator</span>
+              </div>
+            </div>
+          </a>
+
+          <a href="apps/randomizer-aguinaldo.html" class="app-card-link">
             <div class="app-card">
-                <div class="app-icon">
-                    <!-- Follower Checkers Icon -->
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="8" r="4"/>
-                        <path d="M6 20c0-3.33 5.33-5 6-5s6 1.67 6 5"/>
-                        <path d="M17 7l2 2l4-4"/>
-                    </svg>
-                </div>
-                <h3 class="app-title">Follower Checkers</h3>
-                <p class="app-description">
-                    Check who follows or unfollows you on Instagram with ease.
-                </p>
-                <div class="app-tags">
-                    <span class="tag">Instagram</span>
-                    <span class="tag">Utility</span>
-                </div>
-                <div class="app-actions">
-                    <a href="apps/followers-checker.html" class="btn-primary">Open App</a>
-                    <button onclick="showAppInfo('follower-checkers')" class="btn-secondary">Learn More</button>
-                </div>
-            </div>
+              <img
+                src="assets/thumb-randomizer.png"
+                alt="Randomizer Thumbnail"
+                class="app-thumbnail"
+              />
 
-            <!-- Placeholder for future apps -->
-            <div class="app-card coming-soon">
-                <div class="app-icon">
-                <!-- Hourglass Icon (Coming Soon) -->
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M6 2h12" />
-                    <path d="M6 22h12" />
-                    <path d="M6 2c0 5.5 12 5.5 12 11S6 16.5 6 22" />
-                </svg>
+              <div class="info-tag-container">
+                <div class="info-tag">i</div>
+                <div class="info-tooltip">
+                  Randomly generate a Christmas "aguinaldo" cash gift amount
+                  with custom minimum, maximum, and a weighted probability
+                  setting.
                 </div>
-                <h3 class="app-title">Coming Soon</h3>
-                <p class="app-description">
-                More exciting tools and applications are on the way. Stay tuned!
-                </p>
-                <div class="app-tags">
-                <span class="tag">TBA</span>
-                </div>
-                <div class="app-actions">
-                <button onclick="comingSoonAlert()" class="btn-secondary">Notify Me</button>
-                </div>
-            </div>
-  
+              </div>
 
+              <h3 class="app-title">Randomizer Aguinaldo</h3>
+              <p class="app-description">
+                A fun, probabilistic tool for holiday gift-giving.
+              </p>
+
+              <div class="app-tags">
+                <span class="tag tag-var">Fun</span>
+                <span class="tag tag-string">Utility</span>
+                <span class="tag tag-number">Finance</span>
+              </div>
             </div>
+          </a>
+
+          <a href="apps/followers-checker.html" class="app-card-link">
+            <div class="app-card">
+              <img
+                src="assets/thumb-instagram.png"
+                alt="Follower Checker Thumbnail"
+                class="app-thumbnail"
+              />
+
+              <div class="info-tag-container">
+                <div class="info-tag">i</div>
+                <div class="info-tooltip">
+                  Utility for checking who follows or unfollows you on
+                  Instagram. (Note: External API required)
+                </div>
+              </div>
+
+              <h3 class="app-title">Follower Checkers</h3>
+              <p class="app-description">
+                Track Instagram followers with ease and simplicity.
+              </p>
+
+              <div class="app-tags">
+                <span class="tag tag-var">Instagram</span>
+                <span class="tag tag-string">Utility</span>
+              </div>
+            </div>
+          </a>
+
+          <a href="apps/date-predictor.html" class="app-card-link">
+            <div class="app-card">
+              <img
+                src="assets/thumb-predictor.png"
+                alt="Date Predictor Thumbnail"
+                class="app-thumbnail"
+              />
+
+              <div class="info-tag-container">
+                <div class="info-tag">i</div>
+                <div class="info-tooltip">
+                  A fun time-travel utility that calculates future or past dates
+                  based on custom periods. Features a cool "hacking" console
+                  output.
+                </div>
+              </div>
+
+              <h3 class="app-title">Date Predictor</h3>
+              <p class="app-description">
+                Predict dates into the past or future with a console execution
+                aesthetic.
+              </p>
+
+              <div class="app-tags">
+                <span class="tag tag-keyword">Utility</span>
+                <span class="tag tag-func">Fun</span>
+                <span class="tag tag-var">Time</span>
+              </div>
+            </div>
+          </a>
+
+          <div class="app-card coming-soon">
+            <div class="app-icon">
+              <svg
+                width="48"
+                height="48"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M6 2h12" />
+                <path d="M6 22h12" />
+                <path d="M6 2c0 5.5 12 5.5 12 11S6 16.5 6 22" />
+              </svg>
+            </div>
+            <h3 class="app-title">Coming Soon</h3>
+            <p class="app-description">
+              More exciting tools and applications are on the way. Stay tuned!
+            </p>
+            <div class="app-tags">
+              <span class="tag">TBA</span>
+            </div>
+            <div class="app-actions">
+              <button onclick="comingSoonAlert()" class="btn-secondary">
+                Notify Me
+              </button>
+            </div>
+          </div>
         </div>
+      </div>
     </section>
 
     <section id="about" class="about-section">
-        <div class="container">
-            <h2 class="section-title">About</h2>
-            <div class="about-content">
-                <p>Hi! I'm <strong>Wolf</strong>, a developer passionate about creating simple, useful tools that make life easier for students and professionals alike.</p>
-                <p>All applications here are built with modern web technologies, designed to be fast, responsive, and easy to use across all devices.</p>
-                <div class="tech-stack">
-                    <span class="tech-badge">HTML5</span>
-                    <span class="tech-badge">CSS3</span>
-                    <span class="tech-badge">JavaScript</span>
-                    <span class="tech-badge">Responsive Design</span>
-                </div>
+      <div class="container">
+        <h2 class="section-title">About</h2>
+
+        <div class="about-content">
+          <p>
+            Hi! I'm <strong>Wolf</strong>, a student and aspiring developer who
+            builds tools to make life easier—especially student life! My passion
+            is transforming
+            <mark class="var">ideas into simple solutions</mark> using web
+            technologies (HTML, CSS, and JavaScript).
+          </p>
+          <p>
+            I'm still early in my coding journey, focusing on **practical, small
+            projects** that solve real problems, like the Grade Calculator. When
+            I'm not studying or building utility apps, I explore **game
+            development** on the Roblox platform, where I learn complex logic
+            and <mark class="keyword">architect immersive worlds</mark> using
+            Lua.
+          </p>
+          <p>
+            This site is a portfolio of my learning—a place for
+            <mark class="func">simple, effective tools</mark> and experiments. I
+            believe in <mark class="number">clean code</mark> and a
+            straightforward user experience. Let's learn and build together!
+          </p>
+
+          <div class="code-snippet-stack">
+            <div class="code-snippet" data-lang="Lua">
+              <span class="keyword">local</span>
+              <span class="variable">Wolf</span>
+              <span class="operator">=</span>
+              <span class="string">"Learning"</span>
             </div>
+            <div class="code-snippet" data-lang="Python">
+              <span class="function">print</span>(<span class="string"
+                >"Solving problems..."</span
+              >)
+            </div>
+            <div class="code-snippet" data-lang="CSS">
+              <span class="selector">.code-snippet</span> {
+              <span class="property">font-size</span>:
+              <span class="value">small</span>; }
+            </div>
+            <div class="code-snippet" data-lang="JS">
+              <span class="keyword">const</span>
+              <span class="variable">progress</span>
+              <span class="operator">=</span> <span class="number">++i</span>;
+            </div>
+            <div class="code-snippet" data-lang="HTML">
+              <span class="tag">&lt;</span
+              ><span class="tag-name">student</span>
+              <span class="attribute">is-coding</span
+              ><span class="operator">=</span><span class="string">"true"</span
+              ><span class="tag">&gt;</span>
+            </div>
+          </div>
         </div>
+
+        <div class="game-previews-section">
+          <h3 class="game-previews-title">My Roblox Creations:</h3>
+
+          <div
+            id="image-track"
+            class="image-track"
+            data-mouse-down-at="0"
+            data-prev-percentage="0"
+          >
+            <img
+              class="track-image"
+              src="assets/asset1.png"
+              draggable="false"
+              data-name="Wolf Hangout V2"
+              data-link="https://www.roblox.com/games/your-game-id-1"
+              alt="Preview of Roblox game: Wolf Hangout V2"
+            />
+
+            <img
+              class="track-image"
+              src="assets/asset2.png"
+              draggable="false"
+              data-name="The Wolf's Labyrinth"
+              data-description="A challenging adventure/puzzle map focused on complex Lua scripting and environment interaction."
+              data-link="https://www.roblox.com/games/your-game-id-2"
+              alt="Preview of Roblox game: The Wolf's Labyrinth"
+            />
+
+            <img
+              class="track-image"
+              src="assets/asset5.png"
+              draggable="false"
+              data-name="Racing Pro"
+              data-description="High-speed racing game with custom cars, leaderboards, and detailed track modeling."
+              data-link="https://www.roblox.com/games/your-game-id-3"
+              alt="Preview of Roblox game: Racing Pro"
+            />
+          </div>
+
+          <p class="track-hint">Drag or swipe the images to explore my work.</p>
+        </div>
+      </div>
     </section>
 
-    <footer class="footer">
-        <div class="container">
-            <p>Created by Wolf with ❤️</p>
-            <p class="footer-links">
-                <a href="https://github.com/thejeXD/wvlfgradecalculator" target="_blank">GitHub</a>
-                <span>•</span>
-                <a href="mailto:your.email@example.com">Contact</a>
-            </p>
-            <p class="copyright">© 2025 All Rights Reserved</p>
+    <div id="custom-image-modal" class="custom-modal">
+      <div class="modal-content">
+        <span class="close-btn">&times;</span>
+
+        <div class="modal-image-area">
+          <img id="modal-full-image" src="" alt="Full Game Preview" />
         </div>
+
+        <div id="modal-details" class="modal-details">
+          <h3 id="modal-name"></h3>
+          <p id="modal-description"></p>
+          <a id="modal-button" href="#" target="_blank" class="btn-primary"
+            >Visit Game</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="container">
+        <p>Created by Wolf with ❤️</p>
+        <p class="footer-links">
+          <a
+            href="https://github.com/thejeXD/wvlfgradecalculator"
+            target="_blank"
+            >GitHub</a
+          >
+          <span>•</span>
+          <a href="mailto:your.email@example.com">Contact</a>
+        </p>
+        <p class="copyright">© 2025 All Rights Reserved</p>
+      </div>
     </footer>
-
-    <script>
-        // Theme Toggle
-        let currentTheme = localStorage.getItem('theme') || 'light';
-
-        function toggleTheme() {
-            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-            applyTheme();
-            localStorage.setItem('theme', currentTheme);
-        }
-
-        function applyTheme() {
-            const body = document.body;
-            const themeIcon = document.getElementById('theme-icon');
-            
-            if (currentTheme === 'dark') {
-                body.classList.add('dark-theme');
-                themeIcon.innerHTML = `
-                    <circle cx="12" cy="12" r="5"/>
-                    <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-width="2"/>
-                    <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-width="2"/>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2"/>
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="2"/>
-                    <line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-width="2"/>
-                    <line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="2"/>
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2"/>
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2"/>
-                `;
-            } else {
-                body.classList.remove('dark-theme');
-                themeIcon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
-            }
-        }
-
-        // Show app info with SweetAlert
-        function showAppInfo(appName) {
-            if (appName === 'grade-calculator') {
-                Swal.fire({
-                    title: 'Grade Calculator',
-                    html: `
-                        <div style="text-align: left;">
-                            <p><strong>Features:</strong></p>
-                            <ul style="margin: 10px 0;">
-                                <li>Calculate GWA across multiple subjects</li>
-                                <li>Predict required grades to pass</li>
-                                <li>Customizable weight distribution</li>
-                                <li>Dark/Light theme support</li>
-                                <li>Export grades as PDF</li>
-                            </ul>
-                            <p style="margin-top: 15px;"><strong>Perfect for:</strong> Students tracking academic performance</p>
-                        </div>
-                    `,
-                    icon: 'info',
-                    confirmButtonText: 'Got it!',
-                    confirmButtonColor: '#2563eb'
-                });
-            }
-        }
-
-        // Coming soon alert
-        function comingSoonAlert() {
-            Swal.fire({
-                title: 'Coming Soon!',
-                text: 'This app is currently under development. Check back later for updates!',
-                icon: 'info',
-                confirmButtonText: 'Okay',
-                confirmButtonColor: '#2563eb'
-            });
-        }
-
-        // Smooth scroll
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
-
-        // Apply theme on load
-        window.addEventListener('DOMContentLoaded', applyTheme);
-    </script>
-</body>
+  </body>
 </html>
