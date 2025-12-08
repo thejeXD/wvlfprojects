@@ -99,6 +99,7 @@
                                 <polyline points="7 10 12 15 17 10"></polyline>
                                 <line x1="12" y1="15" x2="12" y2="3"></line>
                             </svg><span>Export CSV</span></button>
+                        <button class="dropdown-item" id="manage-storage-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg><span>Manage Storage</span></button>
                         <hr class="dropdown-divider" />
                         <button class="dropdown-item destructive" id="clear-grades-btn"><svg width="16" height="16"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -187,11 +188,6 @@
                 <tbody id="subjects-container">
                     <!-- Subject rows will be injected here by JavaScript -->
                 </tbody>
-            </table>
-        </div>
-        <div class="table-container">
-            <table class="grades-table">
-                <!-- ... table content ... -->
             </table>
         </div>
 
@@ -446,6 +442,40 @@
         </div>
         <div class="settings-footer">
             <button id="apply-component-grade-btn" class="btn-primary save-settings">Apply Grade</button>
+        </div>
+    </div>
+
+    <div id="storage-manager-overlay" class="overlay"></div>
+    <div id="storage-manager-drawer" class="settings-drawer">
+        <div class="settings-header">
+            <h2 class="settings-title">Storage Manager</h2>
+            <button id="close-storage-manager-btn" class="close-settings">&times;</button>
+        </div>
+        <div class="settings-content">
+            <div class="settings-section">
+                <h3 class="section-title">View Saved Settings</h3>
+                <p class="hint">This is a read-only view of your current application settings stored in the browser.</p>
+                <pre id="settings-json-display" class="json-display"></pre>
+            </div>
+            <div class="settings-section">
+                <h3 class="section-title">View Saved Grade Data</h3>
+                <p class="hint">Select a data type from the dropdown to view its saved content in JSON format.</p>
+                <div class="setting-row">
+                    <label for="storage-data-selector">Data Type</label>
+                    <select id="storage-data-selector" class="storage-selector"><option value="all_subjects">All Subjects (Summary)</option></select>
+                </div>
+                <pre id="grade-data-json-display" class="json-display" style="margin-top: var(--spacing-sm);"></pre>
+            </div>
+            <div class="settings-section">
+                <h3 class="section-title">Manage Grade Data</h3>
+                <p class="hint">This will delete all subjects, grades, and component breakdowns. Your settings will be preserved.</p>
+                <button id="clear-grade-data-btn" class="btn-secondary destructive-secondary" style="width: 100%;">Clear Grade Data</button>
+            </div>
+            <div class="settings-section">
+                <h3 class="section-title">Factory Reset</h3>
+                <p class="hint">This will permanently delete <strong>all</strong> application data, including settings, and restore the app to its original state.</p>
+                <button id="delete-all-data-btn" class="btn-danger" style="width: 100%;">Delete All Data</button>
+            </div>
         </div>
     </div>
 
