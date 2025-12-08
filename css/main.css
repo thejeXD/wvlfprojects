@@ -1034,6 +1034,11 @@ body.dark-theme .track-image {
 }
 
 /* ==================== SWEETALERT CUSTOM (Legacy) ==================== */
+.swal2-container {
+    /* Ensure alerts appear above settings drawers (z-index: 2000) */
+    z-index: 2050 !important;
+}
+
 .swal2-popup {
     border-radius: var(--radius-xl) !important;
 }
