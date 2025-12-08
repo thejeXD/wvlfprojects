@@ -375,6 +375,7 @@ class GradeCalculatorApp {
 
         this._updateLabels();
         this._updateNeededHeader();
+        this.calculateOverallGWA(); // Ensure summary visibility is correct on load
     }
 
     async addSubject(data = null) {
@@ -688,14 +689,9 @@ class GradeCalculatorApp {
         this.overallGwaDisplay.textContent = overallGWA.toFixed(2);
         
         const isPassed = overallGWA >= this.settings.passingGrade;
-        // Hide the summary if the table is completely empty.
-        if (this.subjectsContainer.rows.length === 0) {
+        // Hide the summary if the table is empty or no grades have been entered.
+        if (this.subjectsContainer.rows.length === 0 || count === 0) {
             if (this.summarySection) this.summarySection.style.display = 'none';
-        } else if (count === 0) {
-            if (this.summarySection) this.summarySection.style.display = 'flex';
-            this.statusDisplay.textContent = 'Enter Grades';
-            this.statusDisplay.className = 'summary-value status'; // Reset classes
-            this.motivationalText.textContent = 'Start by entering some grades!';
         } else {
             if (this.summarySection) this.summarySection.style.display = 'flex'; // Show the section
             this.statusDisplay.textContent = isPassed ? 'Passed' : 'Failed'; // NOSONAR
