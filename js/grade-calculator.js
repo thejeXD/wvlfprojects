@@ -1,15 +1,20 @@
 class GradeCalculatorApp {
     constructor() { // NOSONAR
-        this.appVersion = '1.5.1'; // Current version of the app
+        this.appVersion = '1.6.0'; // Current version of the app
         this.changelogData = {
+            '1.6.0': [
+                '<strong>New Feature: Goal Tracker!</strong> Set a target GWA in Settings to see a celebration with confetti and effects when you reach your goal.',
+                '<strong>UI Refinement:</strong> Moved "Clear All Grades" and "Delete All Subjects" buttons into the "Manage Data" dropdown for a cleaner interface.',
+                '<strong>Smarter Display:</strong> The GWA summary card now automatically hides when the subject table is empty.',
+                '<strong>Improved Deletion:</strong> You can now delete the last subject in the table. A new blank row will be added automatically.',
+            ],
             '1.5.1': [
                 'Made the "What\'s New" changelog dynamic and viewable by version.',
                 'Enhanced data privacy notice for clarity.',
                 'Minor bug fixes and performance improvements.'
             ],
             '1.5.0': [
-                'Added CSV Import/Export functionality.',
-                'Implemented subject reordering with up/down buttons.',
+                'Added CSV Import/Export functionality and subject reordering with drag-and-drop.',
                 'Added "Reset to Default" for grade weights.',
                 'Added a confirmation prompt for unsaved settings.',
                 'Polished the printable report card design.'
@@ -23,8 +28,9 @@ class GradeCalculatorApp {
             requirementEnabled: false,
             componentBreakdown: false,
             componentWeights: { performance: 40, activities: 30, exam: 30 },
-            theme: localStorage.getItem('theme') || 'light',
+            targetHonorGWA: 0,
         };
+        this.componentData = {}; // New: To store component scores, e.g., { '1-prelim': [{...}] }
 
         this.manuallyEdited = {};
         this.currentComponentSubject = null;
@@ -37,14 +43,18 @@ class GradeCalculatorApp {
         this.settingsDirty = false;
         
         this.passedMemes = [
-            '../assets/memes/passed1.jpg',
-            '../assets/memes/passed2.jpg',
-            '../assets/memes/passed3.jpg',
+            'https://i.pinimg.com/736x/6a/ad/74/6aad74ef177f87a1ea95f246042be3f0.jpg',
+            'https://i.pinimg.com/736x/4f/cd/3b/4fcd3bc76dd8150aba0dedbe3b3b9970.jpg',
+            'https://i.pinimg.com/1200x/d4/8e/68/d48e68043e584f71ea353be6f40ccf83.jpg',
+            'https://i.pinimg.com/1200x/40/7f/16/407f16e13ea486af8eaf209cedb3e987.jpg',
+            'https://i.pinimg.com/736x/a8/71/99/a87199ef52d68e20fdb17b5ee484f1a4.jpg'
         ];
         this.failedMemes = [
-            '../assets/memes/failed1.jpg',
-            '../assets/memes/failed2.jpg',
-            '../assets/memes/failed3.jpg',
+            'https://i.pinimg.com/736x/bd/f9/28/bdf9281f329c668101cc834dc52df732.jpg',
+            'https://i.pinimg.com/736x/12/cd/18/12cd1876fe809f07c19743b3e7e74b71.jpg',
+            'https://i.pinimg.com/736x/00/1e/37/001e37ddbc07ea12635757891de58426.jpg',
+            'https://i.pinimg.com/736x/52/0c/2a/520c2ae783953a02b4240f9990779176.jpg',
+            'https://i.pinimg.com/736x/5b/fb/88/5bfb88aa79fae6602a91206ea05f836b.jpg'
         ];
         this.passedMessages = [
             "Grabe! You ate that! No crumbs left!",
@@ -65,17 +75,15 @@ class GradeCalculatorApp {
 
     _cacheDOMElements() {
         // Main layout
-        this.themeToggleButton = document.getElementById('theme-toggle');
-        this.themeIconSun = document.getElementById('theme-icon-sun');
-        this.themeIconMoon = document.getElementById('theme-icon-moon');
         this.whatsNewBtn = document.getElementById('whats-new-btn');
         this.printBtn = document.getElementById('print-btn');
         this.settingsBtn = document.getElementById('settings-btn');
         this.addSubjectBtn = document.getElementById('add-subject-btn');
-        this.clearGradesBtn = document.getElementById('clear-grades-btn');
-        this.deleteAllBtn = document.getElementById('delete-all-btn');
         this.exportCsvBtn = document.getElementById('export-csv-btn');
         this.importCsvBtn = document.getElementById('import-csv-btn');
+        this.manageStorageBtn = document.getElementById('manage-storage-btn');
+        this.clearGradesBtn = document.getElementById('clear-grades-btn');
+        this.deleteAllBtn = document.getElementById('delete-all-btn');
         this.dropdowns = document.querySelectorAll('.dropdown-btn');
 
         // Table
@@ -85,10 +93,12 @@ class GradeCalculatorApp {
         // Header Summary
         this.overallGwaDisplay = document.getElementById('overall-gwa');
         this.statusDisplay = document.getElementById('status');
+        this.gwaProgressBar = document.getElementById('gwa-progress-bar');
         
         // Summary Section (memes)
         this.motivationalText = document.getElementById('motivational-text');
         this.memeContainer = document.getElementById('meme-container');
+        this.summarySection = document.querySelector('.summary-section');
 
         // Settings Drawer
         this.settingsOverlay = document.getElementById('settings-overlay');
@@ -109,6 +119,7 @@ class GradeCalculatorApp {
         this.wExam = document.getElementById('w-exam');
         this.maxSubjectsInput = document.getElementById('max-subjects-input');
         this.resetWeightsBtn = document.getElementById('reset-weights-btn');
+        this.targetHonorGWAInput = document.getElementById('target-honor-gwa');
         this.resetComponentWeightsBtn = document.getElementById('reset-component-weights-btn');
 
         // Component Drawer
@@ -125,18 +136,21 @@ class GradeCalculatorApp {
         this.examContainer = document.getElementById('exam-container');
         this.componentCalculatedGrade = document.getElementById('component-calculated-grade');
         this.addComponentBtns = document.querySelectorAll('.add-component-btn');
+        // Storage Manager Drawer
+        this.storageManagerOverlay = document.getElementById('storage-manager-overlay');
+        this.storageManagerDrawer = document.getElementById('storage-manager-drawer');
+        this.closeStorageManagerBtn = document.getElementById('close-storage-manager-btn');
+        this.settingsJsonDisplay = document.getElementById('settings-json-display');
+        this.gradeDataJsonDisplay = document.getElementById('grade-data-json-display');
+        this.storageDataSelector = document.getElementById('storage-data-selector');
+        this.clearGradeDataBtn = document.getElementById('clear-grade-data-btn');
+        this.deleteAllDataBtn = document.getElementById('delete-all-data-btn');
     }
 
     _init() {
-        // 1. Load settings from storage FIRST.
-        this._loadSettings();
-
         // 2. Bind event listeners.
         this._bindEventListeners();
 
-        // 3. Apply the theme from loaded settings.
-        this._applyTheme();
-        
         // 4. Set up the initial UI state.
         this.dropdowns.forEach(button => button.classList.remove('active'));
         // Open the privacy dropdown by default
@@ -144,21 +158,22 @@ class GradeCalculatorApp {
         if (privacyDropdown) privacyDropdown.classList.add('active');
         
         // 5. Load saved data from localStorage or create default subjects.
-        this._loadDataFromStorage();
+        this._loadStateFromStorage();
         this._checkVersionAndShowChangelog();
+        this._initSortable();
     }
 
 
     _bindEventListeners() {
-        if (this.themeToggleButton) this.themeToggleButton.addEventListener('click', () => this.toggleTheme());
         if (this.whatsNewBtn) this.whatsNewBtn.addEventListener('click', () => this.showChangelog(true));
         if (this.printBtn) this.printBtn.addEventListener('click', () => this.printReport());
         if (this.settingsBtn) this.settingsBtn.addEventListener('click', () => this.openSettings());
         if (this.addSubjectBtn) this.addSubjectBtn.addEventListener('click', () => this.addSubject());
-        if (this.clearGradesBtn) this.clearGradesBtn.addEventListener('click', () => this.clearAllGrades());
-        if (this.deleteAllBtn) this.deleteAllBtn.addEventListener('click', () => this.deleteAllSubjects());
         if (this.exportCsvBtn) this.exportCsvBtn.addEventListener('click', () => this.exportToCSV());
         if (this.importCsvBtn) this.importCsvBtn.addEventListener('click', () => this.importFromCSV());
+        if (this.manageStorageBtn) this.manageStorageBtn.addEventListener('click', () => this.openStorageManager());
+        if (this.clearGradesBtn) this.clearGradesBtn.addEventListener('click', () => this.clearAllGrades());
+        if (this.deleteAllBtn) this.deleteAllBtn.addEventListener('click', () => this.deleteAllSubjects());
 
         if (this.dropdowns) {
             this.dropdowns.forEach(btn => {
@@ -166,39 +181,53 @@ class GradeCalculatorApp {
             });
         }
 
+        // Handle new action dropdowns
+        document.querySelectorAll('.action-dropdown > .action-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const parentDropdown = e.currentTarget.closest('.action-dropdown');
+                // Close all other action dropdowns
+                document.querySelectorAll('.action-dropdown').forEach(dropdown => {
+                    if (dropdown !== parentDropdown) {
+                        dropdown.classList.remove('open');
+                    }
+                });
+                // Toggle the clicked dropdown
+                parentDropdown.classList.toggle('open');
+            });
+        });
+
         // Event delegation for the table body is safe as it checks the container first
         if (this.subjectsContainer) {
+            const handleGradeInput = (e) => {
+                if (e.target.classList.contains('grade-input')) {
+                    const subjectId = e.target.closest('tr').dataset.subjectId;
+                    if (e.target.type === 'number') {
+                        this.validateGrade(e.target);
+                    }
+                    // Call calculateGWA immediately for real-time feedback
+                    if(subjectId) this.calculateGWA(subjectId);
+                }
+            };
+
+            // Save data whenever an input changes.
+            const debouncedSave = this._debounce(() => this._saveStateToStorage(), 300);
+            const debouncedHandler = (event) => { handleGradeInput(event); debouncedSave(); };
+
             this.subjectsContainer.addEventListener('click', (e) => {
-                const target = e.target.closest('.delete-btn, .calc-btn, .move-btn');
+                const target = e.target.closest('.delete-btn, .calc-btn');
                 if (!target) return;
 
                 const subjectRow = target.closest('tr');
-                const subjectId = parseInt(subjectRow.id.split('-')[1]);
+                const subjectId = subjectRow.dataset.subjectId; // Use the unique ID from dataset
 
                 if (target.classList.contains('delete-btn')) {
                     this.deleteSubject(subjectId);
-                } else if (target.classList.contains('move-up-btn')) {
-                    this._moveSubjectUp(subjectRow);
-                } else if (target.classList.contains('move-down-btn')) {
-                    this._moveSubjectDown(subjectRow);
                 } else if (target.classList.contains('calc-btn')) {
                     const term = target.dataset.term;
                     this.openComponentDrawer(subjectId, term);
                 }
             });
 
-            const handleGradeInput = (e) => {
-                if (e.target.classList.contains('grade-input')) {
-                    const subjectId = parseInt(e.target.closest('tr').id.split('-')[1]);
-                    if (e.target.type === 'number') {
-                        this.validateGrade(e.target);
-                    }
-                    this.calculateGWA(subjectId);
-                }
-            };
-
-            // Save data whenever an input changes.
-            const debouncedHandler = this._debounce((event) => { handleGradeInput(event); this._saveDataToStorage(); }, 300);
             this.subjectsContainer.addEventListener('input', debouncedHandler);
         }
 
@@ -220,6 +249,13 @@ class GradeCalculatorApp {
         if (this.settingsContent) {
             this.settingsContent.addEventListener('input', () => { this.settingsDirty = true; });
         }
+        
+        // Storage Manager
+        if (this.storageManagerOverlay) this.storageManagerOverlay.addEventListener('click', () => this.closeStorageManager());
+        if (this.closeStorageManagerBtn) this.closeStorageManagerBtn.addEventListener('click', () => this.closeStorageManager());
+        if (this.clearGradeDataBtn) this.clearGradeDataBtn.addEventListener('click', () => this._clearGradeData());
+        if (this.deleteAllDataBtn) this.deleteAllDataBtn.addEventListener('click', () => this._deleteAllData());
+        if (this.storageDataSelector) this.storageDataSelector.addEventListener('change', () => this._updateStorageManagerView());
 
         // Component Drawer
         if (this.componentOverlay) this.componentOverlay.addEventListener('click', () => this.closeComponentDrawer());
@@ -257,6 +293,15 @@ class GradeCalculatorApp {
                 });
             }
         });
+
+        // Close dropdowns when clicking outside
+        window.addEventListener('click', (e) => {
+            if (!e.target.closest('.action-dropdown')) {
+                document.querySelectorAll('.action-dropdown.open').forEach(dropdown => {
+                    dropdown.classList.remove('open');
+                });
+            }
+        });
     }
 
     _debounce(func, delay = 300) {
@@ -269,77 +314,12 @@ class GradeCalculatorApp {
         };
     }
 
-    _loadSettings() {
-        const raw = localStorage.getItem('wolfGradeSettings');
-        if (raw) {
-            try {
-                const parsed = JSON.parse(raw);
-                if (parsed && parsed.weights) {
-                    this.settings = { ...this.settings, ...parsed };
-                }
-            } catch (e) { console.error("Failed to parse settings:", e); }
-        }
-        this._updateLabels();
-        this._updateNeededHeader();
-    }
-
-    _loadDataFromStorage() {
-        const savedData = localStorage.getItem('wolfGradeData');
-        this.subjectsContainer.innerHTML = ''; // Clear existing rows
-        this.subjectCount = 0;
-
-        if (savedData) {
-            try {
-                const subjects = JSON.parse(savedData);
-                if (Array.isArray(subjects) && subjects.length > 0) {
-                    subjects.forEach(subject => {
-                        this.addSubject(subject);
-                    });
-                } else {
-                    this.addSubject(); // Add one if storage is empty array
-                }
-            } catch (e) {
-                console.error("Failed to load grade data, starting fresh.", e);
-                this.addSubject(); // Add one on error
-            }
-        } else {
-            // If no data, add 3 default subjects
-            for (let i = 0; i < 3; i++) {
-                this.addSubject();
-            }
-        }
-        // Recalculate everything after loading
-        for (const row of this.subjectsContainer.rows) {
-            this.calculateGWA(parseInt(row.id.split('-')[1]));
-        }
-        this._updateMoveButtonStates();
-    }
-
-    _saveSettingsToStorage() {
-        localStorage.setItem('wolfGradeSettings', JSON.stringify(this.settings));
-    }
-
-    _applyTheme() {
-        document.body.classList.toggle('dark-theme', this.settings.theme === 'dark');
-        if(this.themeIconSun) {
-            this.themeIconSun.style.display = this.settings.theme === 'dark' ? 'block' : 'none';
-        }
-        if(this.themeIconMoon) {
-            this.themeIconMoon.style.display = this.settings.theme === 'light' ? 'block' : 'none';
-        }
-    }
-
-    toggleTheme() {
-        this.settings.theme = this.settings.theme === 'light' ? 'dark' : 'light';
-        this._applyTheme();
-        this._saveSettingsToStorage();
-    }
-
-    _saveDataToStorage() {
+    _getStateForSaving() {
         const subjects = [];
         for (const row of this.subjectsContainer.rows) {
             const getVal = (selector) => row.querySelector(selector).value;
             subjects.push({
+                id: row.dataset.subjectId, // CRITICAL FIX: Save the unique ID
                 name: getVal('input[type="text"]'),
                 prelim: getVal('.prelim'),
                 midterm: getVal('.midterm'),
@@ -347,18 +327,137 @@ class GradeCalculatorApp {
                 finals: getVal('.finals'),
             });
         }
-        localStorage.setItem('wolfGradeData', JSON.stringify(subjects));
+        return {
+            settings: this.settings,
+            subjects: subjects,
+            components: this.componentData,
+        };
     }
 
-    addSubject(data = null) {
-        if (this.subjectsContainer.children.length >= this.settings.maxSubjects) {
+    _saveStateToStorage() {
+        const state = this._getStateForSaving();
+        localStorage.setItem('wolfGradeCalculatorState', JSON.stringify(state));
+    }
+
+    _loadStateFromStorage() {
+        const rawState = localStorage.getItem('wolfGradeCalculatorState');
+        this.subjectsContainer.innerHTML = ''; // Clear UI
+        this.subjectCount = 0;
+
+        if (rawState) {
+            try {
+                const state = JSON.parse(rawState);
+
+                // Load settings
+                if (state.settings && state.settings.weights) {
+                    this.settings = { ...this.settings, ...state.settings };
+                }
+
+                // Load component data
+                if (state.components) {
+                    this.componentData = state.components;
+                }
+
+                // Load subjects
+                if (Array.isArray(state.subjects) && state.subjects.length > 0) {
+                    state.subjects.forEach(subject => this.addSubject(subject));
+                } else {
+                    this.addSubject(); // Add one if storage is empty
+                }
+            } catch (e) {
+                console.error("Failed to load state, starting fresh.", e);
+                this.addSubject(); // Add one on error
+            }
+        } else {
+            // If no saved state at all, add one default subject
+            this.addSubject();
+        }
+
+        this._updateLabels();
+        this._updateNeededHeader();
+    }
+
+    async addSubject(data = null) {
+        // If called without data (from the button click), show the form first.
+        if (!data) {
+            try {
+                const result = await Swal.fire({
+                    title: 'Add New Subject',
+                    html: `
+                        <p style="font-size: 0.9em; color: var(--text-secondary); margin-bottom: 0;">Enter the subject details below. All fields are optional.</p>
+                        <div class="swal-form-grades">
+                            <div class="swal-form-group swal-form-full-width">
+                                <label for="swal-name">Subject Name</label>
+                                <input id="swal-name" class="swal2-input" placeholder="e.g., Mathematics">
+                            </div>
+                            <div class="swal-form-group">
+                                <label for="swal-prelim">Prelim</label>
+                                <input id="swal-prelim" class="swal2-input" type="number" min="0" max="100" placeholder="e.g., 85">
+                            </div>
+                            <div class="swal-form-group">
+                                <label for="swal-midterm">Midterm</label>
+                                <input id="swal-midterm" class="swal2-input" type="number" min="0" max="100" placeholder="e.g., 88">
+                            </div>
+                            <div class="swal-form-group">
+                                <label for="swal-prefinals">Pre-Finals</label>
+                                <input id="swal-prefinals" class="swal2-input" type="number" min="0" max="100" placeholder="e.g., 90">
+                            </div>
+                            <div class="swal-form-group">
+                                <label for="swal-finals">Finals</label>
+                                <input id="swal-finals" class="swal2-input" type="number" min="0" max="100" placeholder="e.g., 92">
+                            </div>
+                        </div>
+                    `,
+                    confirmButtonText: 'Add Subject',
+                    confirmButtonColor: '#2563eb',
+                    showCancelButton: true,
+                    focusConfirm: false, // Keep focus on the form
+                    preConfirm: () => {
+                        const grades = {
+                            name: document.getElementById('swal-name').value,
+                            prelim: document.getElementById('swal-prelim').value,
+                            midterm: document.getElementById('swal-midterm').value,
+                            prefinals: document.getElementById('swal-prefinals').value,
+                            finals: document.getElementById('swal-finals').value,
+                        };
+
+                        // Validate all grade fields
+                        for (const key in grades) {
+                            if (key !== 'name' && grades[key]) {
+                                const grade = parseFloat(grades[key]);
+                                if (isNaN(grade) || grade < 0 || grade > 100) {
+                                    Swal.showValidationMessage(`Invalid grade for ${key}. Please enter a number between 0 and 100.`);
+                                    return false; // Prevent closing
+                                }
+                            }
+                        }
+                        return grades;
+                    }
+                });
+
+                if (result.isConfirmed) {
+                    this._createSubjectRow(result.value);
+                }
+            } catch (error) {
+                console.error("SweetAlert form error:", error);
+            }
+        } else {
+            // If called with data (from loading storage), create the row directly.
+            this._createSubjectRow(data);
+        }
+    }
+
+    _createSubjectRow(data = null) {
+        const uniqueSubjectId = data?.id || `sub-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`; // Generate unique ID if not provided
+        if (this.subjectsContainer.children.length >= this.settings.maxSubjects && !data) { // Only check limit if adding a new subject, not loading existing
             Swal.fire('Limit Reached', `You can only add up to ${this.settings.maxSubjects} subjects. You can change this in Settings.`, 'warning');
             return;
         }
 
         this.subjectCount++;
-        const row = this.subjectsContainer.insertRow();
-        row.id = `subject-${this.subjectCount}`;
+        const row = this.subjectsContainer.insertRow(-1);
+        row.id = `subject-${uniqueSubjectId}`; // Use unique ID for row ID
+        row.dataset.subjectId = uniqueSubjectId; // Store unique ID in dataset for easy retrieval
 
         const createCell = (label) => {
             const cell = row.insertCell();
@@ -378,7 +477,7 @@ class GradeCalculatorApp {
         const subjectInput = document.createElement('input');
         subjectInput.type = 'text';
         subjectInput.className = 'grade-input';
-        subjectInput.placeholder = 'Subject Name';
+        subjectInput.placeholder = 'Subject Name'; // Default placeholder
         subjectInput.value = data ? data.name : `Subject ${this.subjectCount}`;
         subjectWrapper.appendChild(subjectInput);
         subjectCell.appendChild(subjectWrapper);
@@ -390,7 +489,7 @@ class GradeCalculatorApp {
             const input = document.createElement('input');
             input.type = 'number';
             input.className = `grade-input ${term}`;
-            input.dataset.field = `${term}-${this.subjectCount}`;
+            input.dataset.field = `${term}-${uniqueSubjectId}`; // Use unique ID for data-field
             input.placeholder = '-';
             input.min = '0';
             input.max = '100';
@@ -401,7 +500,7 @@ class GradeCalculatorApp {
             if (this.settings.componentBreakdown) {
                 const btn = document.createElement('button');
                 btn.className = 'calc-btn';
-                btn.dataset.subject = this.subjectCount;
+                btn.dataset.subject = uniqueSubjectId; // Use unique ID for data-subject
                 btn.dataset.term = term;
                 btn.title = 'Calculate from components';
                 btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4a2 2 0 0 1 2-2h8.5L20 7.5V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-3"/><polyline points="14 2 14 8 20 8"/><path d="M8 16.5h2M12 16.5h2M10 14v5M16 14h-3v5h3a2 2 0 0 0 2-2v-1a2 2 0 0 0-2-2Z"/></svg>`;
@@ -428,88 +527,81 @@ class GradeCalculatorApp {
             return cell;
         };
 
-        createResultCell(`gwa-${this.subjectCount}`, 'GWA');
-        const neededCell = createResultCell(`need-${this.subjectCount}`, 'Needed');
-        neededCell.id = `needed-cell-${this.subjectCount}`;
-        neededCell.style.display = this.settings.requirementEnabled ? '' : 'none';
-
+        createResultCell(`gwa-${uniqueSubjectId}`, 'GWA');
+        const neededCell = createResultCell(`need-${uniqueSubjectId}`, 'Needed');
+        neededCell.id = `needed-cell-${uniqueSubjectId}`;
+        neededCell.style.display = this.settings.requirementEnabled ? '' : 'none'; // This ID is fine as it's just for display
+        
         // 4. Actions Cell
         const actionsCell = createCell('Actions');
         const actionsWrapper = createWrapper();
-        
-        const upBtn = document.createElement('button');
-        upBtn.className = 'move-btn move-up-btn';
-        upBtn.title = 'Move Up';
-        upBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="18 15 12 9 6 15"></polyline></svg>`;
-        
-        const downBtn = document.createElement('button');
-        downBtn.className = 'move-btn move-down-btn';
-        downBtn.title = 'Move Down';
-        downBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"></polyline></svg>`;
+
+        const dragHandle = document.createElement('span');
+        dragHandle.className = 'drag-handle';
+        dragHandle.title = 'Drag to reorder';
+        dragHandle.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle><circle cx="5" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle></svg>`;
 
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-btn';
         deleteBtn.title = 'Delete Subject';
         deleteBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>`;
         
-        actionsWrapper.appendChild(upBtn);
-        actionsWrapper.appendChild(downBtn);
+        actionsWrapper.appendChild(dragHandle);
         actionsWrapper.appendChild(deleteBtn);
         actionsCell.appendChild(actionsWrapper);
 
-        if (!data) this._saveDataToStorage(); // Save immediately when a new blank subject is added
-        this._updateMoveButtonStates();
-    }
-
-    _moveSubjectUp(row) {
-        const prevRow = row.previousElementSibling;
-        if (prevRow) {
-            this.subjectsContainer.insertBefore(row, prevRow);
-            this._saveDataToStorage();
-            this._updateMoveButtonStates();
+        // If data was passed (from form or storage), calculate its GWA now.
+        if (data) {
+            // For each term, check if component data exists. If so, calculate and apply it.
+            ['prelim', 'midterm', 'prefinals', 'finals'].forEach(term => {
+                const dataKey = `${uniqueSubjectId}-${term}`;
+                const savedComponents = this.componentData[dataKey];
+                if (savedComponents) {
+                    const calculatedGrade = this._calculateGradeFromComponents(savedComponents);
+                    const targetInput = row.querySelector(`.${term}`);
+                    if (targetInput) { // CRITICAL FIX: Apply the grade as long as component data exists, even if the result is 0.
+                        targetInput.value = calculatedGrade.toFixed(2);
+                    }
+                }
+            });
+            // After potentially updating grades from components, calculate the final GWA for the row.
+            this.calculateGWA(uniqueSubjectId);
         }
+
+        this._saveStateToStorage(); // Save the new state
     }
 
-    _moveSubjectDown(row) {
-        const nextRow = row.nextElementSibling;
-        if (nextRow) {
-            this.subjectsContainer.insertBefore(nextRow, row);
-            this._saveDataToStorage();
-            this._updateMoveButtonStates();
-        }
-    }
-
-    _updateMoveButtonStates() {
-        const rows = this.subjectsContainer.rows;
-        if (rows.length <= 1) {
-            if (rows[0]) {
-                rows[0].querySelector('.move-up-btn').disabled = true;
-                rows[0].querySelector('.move-down-btn').disabled = true;
+    _initSortable() {
+        if (this.subjectsContainer) {
+            Sortable.create(this.subjectsContainer, { // Use Sortable.create
+                animation: 150,
+                handle: '.drag-handle', // Use the drag handle to initiate dragging
+                onEnd: () => {
+                    // Save the new order to localStorage after a drag operation
+                    this._saveStateToStorage();
+                }
             }
-            return;
-        }
-
-        for (let i = 0; i < rows.length; i++) {
-            rows[i].querySelector('.move-up-btn').disabled = (i === 0);
-            rows[i].querySelector('.move-down-btn').disabled = (i === rows.length - 1);
+            );
         }
     }
 
     deleteSubject(id) {
-        if (this.subjectsContainer.rows.length <= 1) {
-            Swal.fire('Cannot Delete', 'Cannot delete the last subject.', 'error');
-            return;
-        }
+        const isLastSubject = this.subjectsContainer.rows.length <= 1;
+        const confirmationText = isLastSubject 
+            ? "This is the last subject. Deleting it will clear the table and add a new blank row."
+            : "This action cannot be undone.";
         
         Swal.fire({
-            title: 'Delete Subject?', text: "This action cannot be undone.", icon: 'warning',
+            title: 'Delete Subject?', text: confirmationText, icon: 'warning',
             showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#6c757d', confirmButtonText: 'Yes, delete it!'
         }).then((result) => {
             if (result.isConfirmed) {
-                document.getElementById(`subject-${id}`)?.remove();
+                document.getElementById(`subject-${id}`)?.remove(); // ID is now uniqueSubjectId
+                if (isLastSubject) {
+                    this.addSubject(); // Add a new blank row if the last one was deleted
+                }
                 this.calculateOverallGWA();
-                this._updateMoveButtonStates();
-                this._saveDataToStorage();
+                this._saveStateToStorage();
                 Swal.fire('Deleted!', 'Subject has been removed.', 'success');
             }
         });
@@ -531,8 +623,7 @@ class GradeCalculatorApp {
                 }
                 this.addSubject(); // Add one fresh subject back
                 this.calculateOverallGWA();
-                this._updateMoveButtonStates();
-                this._saveDataToStorage();
+                this._saveStateToStorage();
                 Swal.fire('Deleted!', 'All subjects have been removed.', 'success');
             }
         });
@@ -548,16 +639,16 @@ class GradeCalculatorApp {
                     row.querySelectorAll('.grade-input[type="number"]').forEach(input => {
                         input.value = '';
                     });
-                    const id = parseInt(row.id.split('-')[1]);
+                    const id = row.dataset.subjectId; // Use unique ID
                     if(id) this.calculateGWA(id);
                 }
-                this._saveDataToStorage();
+                this._saveStateToStorage();
                 Swal.fire('Cleared!', 'All grades have been removed.', 'success');
             }
         });
     }
     
-    calculateGWA(id, skipPrediction = false) {
+    calculateGWA(id, skipPrediction = false) { // ID is now uniqueSubjectId
         const row = document.getElementById(`subject-${id}`);
         if (!row) return;
 
@@ -597,28 +688,129 @@ class GradeCalculatorApp {
         this.overallGwaDisplay.textContent = overallGWA.toFixed(2);
         
         const isPassed = overallGWA >= this.settings.passingGrade;
-        if (count === 0) {
+        // Hide the summary if the table is completely empty.
+        if (this.subjectsContainer.rows.length === 0) {
+            if (this.summarySection) this.summarySection.style.display = 'none';
+        } else if (count === 0) {
+            if (this.summarySection) this.summarySection.style.display = 'flex';
             this.statusDisplay.textContent = 'Enter Grades';
-            this.statusDisplay.className = 'status';
+            this.statusDisplay.className = 'summary-value status'; // Reset classes
             this.motivationalText.textContent = 'Start by entering some grades!';
-            this.memeContainer.innerHTML = '';
         } else {
-            this.statusDisplay.textContent = isPassed ? 'Passed' : 'Failed';
-            this.statusDisplay.className = `status ${isPassed ? 'passed' : 'failed'}`;
+            if (this.summarySection) this.summarySection.style.display = 'flex'; // Show the section
+            this.statusDisplay.textContent = isPassed ? 'Passed' : 'Failed'; // NOSONAR
+            // Correctly add/remove classes without overwriting base classes
+            this.statusDisplay.classList.remove('passed', 'failed');
+            this.statusDisplay.classList.add(isPassed ? 'passed' : 'failed');
             this.motivationalText.textContent = this._getRandomItem(isPassed ? this.passedMessages : this.failedMessages);
-            this._showMeme(isPassed);
+            // CRITICAL FIX: Only show the meme if the summary section is already visible (i.e., not on initial load).
+            // This prevents it from running on initial page load and clearing component data.
+            if (this.summarySection.style.display !== 'none') {
+                this._showMeme(isPassed);
+            }
         }
+
+        // Animate the progress circle
+        if (this.gwaProgressBar) {
+            const circumference = 2 * Math.PI * 80; // 2 * PI * radius
+            const progress = (overallGWA > 0) ? (overallGWA / 100) : 0;
+            const offset = circumference * (1 - progress);
+            this.gwaProgressBar.style.strokeDashoffset = offset;
+            this.gwaProgressBar.style.stroke = isPassed ? 'var(--success-color)' : 'var(--danger-color)';
+        }
+
+        // Reset party effect if GWA changes
+        if (this.gwaProgressBar.classList.contains('party-time')) {
+            this.gwaProgressBar.classList.remove('party-time');
+        }
+        // Check for goal achievement after GWA is updated
+        this._calculateTargetHonorNeeded();
     }
     
+    _calculateTargetHonorNeeded() {
+        const targetGWA = this.settings.targetHonorGWA;
+        if (!targetGWA || targetGWA <= 0) return; // Do nothing if no goal is set
+
+        const rows = Array.from(this.subjectsContainer.rows);
+        const totalSubjects = rows.length;
+        if (totalSubjects === 0) return;
+
+        let completedGwaSum = 0;
+        let inProgressCount = 0;
+
+        rows.forEach(row => {
+            const gwa = parseFloat(row.querySelector('.result-box').textContent);
+            const hasEmptyField = Array.from(row.querySelectorAll('.grade-input[type="number"]')).some(input => input.value === '');
+            if (!hasEmptyField && !isNaN(gwa) && gwa > 0) {
+                completedGwaSum += gwa;
+            } else {
+                inProgressCount++;
+            }
+        });
+
+        const overallGWA = parseFloat(this.overallGwaDisplay.textContent);
+
+        if (inProgressCount === 0) {
+            if (overallGWA >= targetGWA) {
+                this.motivationalText.innerHTML = `<strong>Congratulations!</strong> You reached your goal of ${targetGWA.toFixed(2)}! 🎉`;
+                this._triggerCelebration();
+            } else {
+                // Optional: You can add a message here if you want
+            }
+        } else {
+            const totalPointsNeeded = targetGWA * totalSubjects;
+            const pointsFromCompleted = completedGwaSum;
+            const neededGWA = (totalPointsNeeded - pointsFromCompleted) / inProgressCount;
+            // This logic can be re-added if you want to display the "needed" GWA somewhere else.
+        }
+    }
+
      _showMeme(isPassed) {
-        this.memeContainer.innerHTML = '';
+        // Find and remove any existing meme image to prevent duplicates
+        const existingMeme = this.memeContainer.querySelector('img');
+        if (existingMeme) {
+            existingMeme.remove();
+        }
+
         const memeImg = document.createElement('img');
         memeImg.src = this._getRandomItem(isPassed ? this.passedMemes : this.failedMemes);
         memeImg.alt = isPassed ? 'Passed Meme' : 'Failed Meme';
         memeImg.onerror = () => { memeImg.style.display = 'none'; };
-        this.memeContainer.appendChild(memeImg);
+        this.memeContainer.prepend(memeImg); // Use prepend to ensure it's the first child (lowest z-index)
     }
     
+    _triggerCelebration() {
+        if (this.gwaProgressBar) {
+            this.gwaProgressBar.classList.add('party-time');
+        }
+
+        // Add the GIF
+        const existingGif = this.memeContainer.querySelector('.celebration-gif');
+        if (!existingGif) {
+            const gif = document.createElement('img');
+            gif.src = 'https://media.tenor.com/VQBahlBHyn8AAAAi/ted-puppy.gif';
+            gif.className = 'celebration-gif';
+            this.memeContainer.appendChild(gif);
+            // Remove the GIF after the celebration
+            setTimeout(() => gif.remove(), 5000);
+        }
+
+        // Use canvas-confetti
+        const duration = 3 * 1000;
+        const end = Date.now() + duration;
+
+        (function frame() {
+            confetti({
+                particleCount: 2,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 },
+            });
+            confetti({ particleCount: 2, angle: 120, spread: 55, origin: { x: 1 } });
+            if (Date.now() < end) requestAnimationFrame(frame);
+        }());
+    }
+
     _getRandomItem(arr) {
         return arr[Math.floor(Math.random() * arr.length)];
     }
@@ -976,6 +1168,7 @@ class GradeCalculatorApp {
         this.passingGradeInput.value = this.settings.passingGrade.toFixed(2);
         this.requirementToggle.checked = this.settings.requirementEnabled;
         this.maxSubjectsInput.value = this.settings.maxSubjects;
+        this.targetHonorGWAInput.value = this.settings.targetHonorGWA > 0 ? this.settings.targetHonorGWA.toFixed(2) : '';
         this.componentToggle.checked = this.settings.componentBreakdown;
         this.wPerformance.value = this.settings.componentWeights.performance;
         this.wActivities.value = this.settings.componentWeights.activities;
@@ -1033,6 +1226,7 @@ class GradeCalculatorApp {
         this.settings.requirementEnabled = this.requirementToggle.checked;
         this.settings.maxSubjects = maxSubjects;
         this.settings.componentBreakdown = this.componentToggle.checked;
+        this.settings.targetHonorGWA = parseFloat(this.targetHonorGWAInput.value) || 0;
         
         if (this.settings.componentBreakdown) {
              const perf = parseFloat(this.wPerformance.value) || 0;
@@ -1045,7 +1239,7 @@ class GradeCalculatorApp {
              this.settings.componentWeights = { performance: perf, activities: act, exam: exam };
         }
 
-        this._saveSettingsToStorage();
+        this._saveStateToStorage();
         this._updateLabels();
         this._updateNeededHeader();
         this._updateAllSubjectsUI();
@@ -1062,6 +1256,23 @@ class GradeCalculatorApp {
         });
     }
     
+    _resetWeights() {
+        this.wPrelim.value = 20;
+        this.wMidterm.value = 20;
+        this.wPrefinals.value = 20;
+        this.wFinals.value = 40;
+        this.settingsDirty = true; // Mark settings as changed
+        Swal.fire({ title: 'Weights Reset', text: 'Main grade weights have been reset to default. Click "Save Settings" to apply.', icon: 'info', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
+    }
+
+    _resetComponentWeights() {
+        this.wPerformance.value = 40;
+        this.wActivities.value = 30;
+        this.wExam.value = 30;
+        this.settingsDirty = true; // Mark settings as changed
+        Swal.fire({ title: 'Weights Reset', text: 'Component weights have been reset to default. Click "Save Settings" to apply.', icon: 'info', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });
+    }
+
      _updateAllSubjectsUI() {
         for (const row of this.subjectsContainer.rows) {
             const id = parseInt(row.id.split('-')[1]);
@@ -1147,25 +1358,43 @@ class GradeCalculatorApp {
     }
     
      openComponentDrawer(subjectId, term) {
-        this.currentComponentSubject = subjectId;
+        this.currentComponentSubject = subjectId; // This is now the unique ID
         this.currentComponentTerm = term;
 
-        // Reset fields
-        this.performanceTasksContainer.innerHTML = '';
-        this.activitiesContainer.innerHTML = '';
-        this.examContainer.innerHTML = '';
         this.componentCalculatedGrade.textContent = '-';
 
         // Set title
-        const subjectRow = document.getElementById(`subject-${subjectId}`);
+        const subjectRow = document.getElementById(`subject-${subjectId}`); // Use unique ID
         const subjectNameInput = subjectRow.querySelector('input[type="text"]');
         const subjectName = subjectNameInput.value || `Subject ${subjectId}`;
-        this.componentDrawerTitle.textContent = `Calculate ${term.charAt(0).toUpperCase() + term.slice(1)} Grade for ${subjectName}`;
+        this.componentDrawerTitle.textContent = `Calculate ${term.charAt(0).toUpperCase() + term.slice(1)} for ${subjectName}`;
 
         // Set weight labels
         this.compPerfWeight.textContent = `${this.settings.componentWeights.performance}%`;
         this.compActWeight.textContent = `${this.settings.componentWeights.activities}%`;
         this.compExamWeight.textContent = `${this.settings.componentWeights.exam}%`;
+
+        // CRITICAL FIX: Clear the containers *before* loading new data.
+        this.performanceTasksContainer.innerHTML = '';
+        this.activitiesContainer.innerHTML = '';
+        this.examContainer.innerHTML = '';
+
+        // New: Load saved component data for this subject and term
+        const dataKey = `${subjectId}-${term}`;
+        const savedComponents = this.componentData[dataKey];
+        if (savedComponents) {
+            // Automatically create the fields for any saved data.
+            Object.keys(savedComponents).forEach(componentType => {
+                const items = savedComponents[componentType];
+                if (Array.isArray(items)) {
+                    items.forEach(itemData => {
+                        // Automatically call addComponentField to build the UI from saved data.
+                        this.addComponentField(componentType, itemData);
+                    })
+                }
+            });
+            this.calculateComponentGrade(); // Recalculate total after loading
+        }
 
         // Show drawer
         this.componentOverlay.classList.add('open');
@@ -1177,7 +1406,7 @@ class GradeCalculatorApp {
        this.componentDrawer.classList.remove('open');
     }
 
-    addComponentField(type) {
+    addComponentField(type, data = null) {
         const containerMap = {
             performance: this.performanceTasksContainer,
             activities: this.activitiesContainer,
@@ -1189,18 +1418,29 @@ class GradeCalculatorApp {
         const fieldId = `${type}-${Date.now()}`;
         const fieldHTML = `
             <div class="component-field-row" id="${fieldId}">
-                <input type="number" class="component-score" placeholder="Score" min="0">
-                <span class="divider"> / </span>
-                <input type="number" class="component-total" placeholder="Items" min="1">
-                <span class="divider"> = </span>
+                <input type="text" id="comp-name-${fieldId}" class="component-name" placeholder="e.g., Quiz 1" style="text-align: left;" value="${data?.name || ''}">
+                <input type="number" id="comp-score-${fieldId}" class="component-score" placeholder="Score" min="0" pattern="[0-9]*" value="${data?.score || ''}">
+                <span class="divider">/</span>
+                <input type="number" id="comp-total-${fieldId}" class="component-total" placeholder="Items" min="1" pattern="[0-9]*" value="${data?.total || ''}">
+                <span class="divider">=</span>
                 <span class="component-row-total">-</span>
-                <button class="remove-component-btn" data-field-id="${fieldId}" data-type="${type}" title="Remove">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
+                <button class="remove-component-btn" data-field-id="${fieldId}" data-type="${type}" title="Remove"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
             </div>
         `;
         container.insertAdjacentHTML('beforeend', fieldHTML);
+
+        // CRITICAL FIX: If data was loaded, calculate the total for this new row immediately.
+        if (data) {
+            const newRow = document.getElementById(fieldId);
+            this._calculateComponentRowTotal(newRow);
+        }
     }
+    _saveCurrentComponentData() {
+        const dataKey = `${this.currentComponentSubject}-${this.currentComponentTerm}`;
+        this.componentData[dataKey] = this._getCurrentComponentData();
+        this._saveStateToStorage();
+    }
+
 
     removeComponentField(fieldId) {
         const field = document.getElementById(fieldId);
@@ -1214,9 +1454,18 @@ class GradeCalculatorApp {
         const scoreInput = row.querySelector('.component-score');
         const totalInput = row.querySelector('.component-total');
         const totalDisplay = row.querySelector('.component-row-total');
-
+        
         const score = parseFloat(scoreInput.value) || 0;
         const total = parseFloat(totalInput.value) || 0;
+
+        // New: Validate that score is not greater than total
+        if (total > 0 && score > total) {
+            scoreInput.style.borderColor = 'var(--danger-color)';
+            scoreInput.style.color = 'var(--danger-color)';
+        } else {
+            scoreInput.style.borderColor = ''; // Revert to default
+            scoreInput.style.color = ''; // Revert to default
+        }
 
         totalDisplay.textContent = (total > 0) ? `${((score / total) * 100).toFixed(2)}%` : '-';
     }
@@ -1256,9 +1505,62 @@ class GradeCalculatorApp {
             this.componentCalculatedGrade.textContent = finalGrade.toFixed(2);
         }
     }
+    
+    _calculateGradeFromComponents(componentData) {
+        const w = this.settings.componentWeights;
+
+        const calculateSubGrade = (tasks) => {
+            if (!tasks || tasks.length === 0) return 0;
+            let totalScore = 0;
+            let totalItems = 0;
+
+            tasks.forEach(item => {
+                const score = parseFloat(item.score) || 0;
+                const items = parseFloat(item.total) || 0;
+                if (items > 0) {
+                    totalScore += score;
+                    totalItems += items;
+                }
+            });
+
+            if (totalItems === 0) return 0;
+            return (totalScore / totalItems) * 100;
+        };
+
+        const perfGrade = calculateSubGrade(componentData.performance);
+        const actGrade = calculateSubGrade(componentData.activities);
+        const examGrade = calculateSubGrade(componentData.exam);
+
+        return (perfGrade * w.performance / 100) + (actGrade * w.activities / 100) + (examGrade * w.exam / 100);
+    }
+
+    _isComponentDataValid() {
+        const containers = [this.performanceTasksContainer, this.activitiesContainer, this.examContainer];
+        let isValid = true;
+        for (const container of containers) {
+            if (container) {
+                const rows = container.querySelectorAll('.component-field-row');
+                rows.forEach(row => {
+                    const score = parseFloat(row.querySelector('.component-score').value) || 0;
+                    const total = parseFloat(row.querySelector('.component-total').value) || 0;
+                    if (total > 0 && score > total) {
+                        isValid = false;
+                    }
+                });
+            }
+        }
+        return isValid;
+    }
 
     applyComponentGrade() {
         try {
+            if (!this._isComponentDataValid()) {
+                Swal.fire('Invalid Score', 'One or more scores are greater than the total items. Please correct the highlighted fields before applying.', 'error');
+                return;
+            }
+            // CRITICAL FIX: Save the current state of the component drawer before applying the grade.
+            this._saveCurrentComponentData();
+
             const gradeText = this.componentCalculatedGrade.textContent;
             const calculatedGrade = (gradeText === '-') ? 0 : parseFloat(gradeText);
 
@@ -1281,6 +1583,9 @@ class GradeCalculatorApp {
             // Trigger a recalculation for the row
             this.calculateGWA(this.currentComponentSubject, true);
 
+            // CRITICAL FIX: Save the main grade data after applying the component grade.
+            this._saveStateToStorage();
+
         } catch (error) {
             Swal.fire('Application Error', error.message, 'error');
             return; // Stop execution if there was an error
@@ -1295,6 +1600,29 @@ class GradeCalculatorApp {
             timer: 2000,
             showConfirmButton: false
         });
+    }
+
+    _getCurrentComponentData() {
+        const data = {
+            performance: [],
+            activities: [],
+            exam: []
+        };
+        const processContainer = (container, type) => {
+            if (container) {
+                container.querySelectorAll('.component-field-row').forEach(row => {
+                    data[type].push({
+                        name: row.querySelector('.component-name').value,
+                        score: row.querySelector('.component-score').value,
+                        total: row.querySelector('.component-total').value,
+                    });
+                });
+            }
+        };
+        processContainer(this.performanceTasksContainer, 'performance');
+        processContainer(this.activitiesContainer, 'activities');
+        processContainer(this.examContainer, 'exam');
+        return data;
     }
 
     _checkVersionAndShowChangelog() {
@@ -1350,6 +1678,110 @@ class GradeCalculatorApp {
                 showModal();
             }
         }
+    }
+
+    openStorageManager() {
+        this._populateStorageManagerDropdown(); // Populate dropdown first
+        this._updateStorageManagerView();      // Then show the initial view
+
+        this.storageManagerOverlay.classList.add('open');
+        this.storageManagerDrawer.classList.add('open');
+    }
+
+    _populateStorageManagerDropdown() {
+        const state = JSON.parse(localStorage.getItem('wolfGradeCalculatorState')) || {};
+        
+        // Clear previous dynamic options, keeping the first default option
+        while (this.storageDataSelector.options.length > 1) {
+            this.storageDataSelector.remove(1);
+        }
+
+        // Dynamically add an option for each saved subject
+        if (state.subjects) {
+            state.subjects.forEach(subject => {
+                const option = document.createElement('option');
+                option.value = subject.id; // The value is the unique subject ID
+                const displayName = subject.name || subject.id; // Use name, fallback to ID
+                option.textContent = displayName;
+                this.storageDataSelector.appendChild(option);
+            });
+        }
+    }
+
+    _updateStorageManagerView() {
+        const state = JSON.parse(localStorage.getItem('wolfGradeCalculatorState')) || { subjects: [], components: {} };
+        
+        // Always display settings
+        this.settingsJsonDisplay.textContent = JSON.stringify(state.settings || this.settings, null, 2);
+
+        // Display the selected grade data type
+        const selectedId = this.storageDataSelector.value;
+        let dataToDisplay = {};
+
+        if (selectedId === 'all_subjects') {
+            // Show the summary list of all subjects
+            dataToDisplay = state.subjects || [];
+        } else {
+            // A specific subject ID was selected, gather all its data
+            const subjectData = state.subjects.find(s => s.id === selectedId);
+            const subjectComponents = {};
+            Object.keys(state.components).forEach(key => {
+                if (key.startsWith(selectedId)) {
+                    subjectComponents[key] = state.components[key];
+                }
+            });
+
+            dataToDisplay = {
+                subject: subjectData,
+                components: subjectComponents
+            };
+        }
+        
+        this.gradeDataJsonDisplay.textContent = JSON.stringify(dataToDisplay, null, 2);
+    }
+
+    closeStorageManager() {
+        this.storageManagerOverlay.classList.remove('open');
+        this.storageManagerDrawer.classList.remove('open');
+    }
+
+    _clearGradeData() {
+        Swal.fire({
+            title: 'Clear All Grade Data?',
+            text: "This will delete all subjects and component breakdowns. Your settings will be kept. This action cannot be undone.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            confirmButtonText: 'Yes, Clear Data'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const state = JSON.parse(localStorage.getItem('wolfGradeCalculatorState')) || {};
+                state.subjects = [];
+                state.components = {};
+                localStorage.setItem('wolfGradeCalculatorState', JSON.stringify(state));
+                window.location.reload();
+            }
+        });
+    }
+
+    _deleteAllData() {
+        Swal.fire({
+            title: 'Delete All Application Data?',
+            html: "This will perform a <strong>factory reset</strong>, deleting all subjects, grades, and settings. The page will reload to its original state. This action is permanent.",
+            icon: 'error',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            confirmButtonText: 'Yes, Delete Everything'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                localStorage.removeItem('wolfGradeCalculatorState');
+                // Also remove older keys just in case
+                localStorage.removeItem('wolfGradeData');
+                localStorage.removeItem('wolfGradeComponentData');
+                localStorage.removeItem('wolfGradeSettings');
+                window.location.reload();
+            }
+        });
     }
 }
 

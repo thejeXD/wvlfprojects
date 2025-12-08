@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Wolf's Apps: Tools & Roblox Creations</title>
+    <title>Wolf's Portfolio | Student Apps & Roblox Game Creations</title>
 
     <link rel="canonical" href="https://wolfprojects.netlify.app/" />
 
@@ -23,7 +23,7 @@
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://wolfprojects.netlify.app/" />
-    <meta property="og:image" content="assets/logo.png" />
+    <meta property="og:image" content="https://wolfprojects.netlify.app/assets/asset1.png" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Wolf's Student Tools & Portfolio" />
@@ -38,6 +38,22 @@
     <link rel="stylesheet" href="css/main.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="js/main.js" defer></script>
+
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfilePage",
+      "mainEntity": {
+        "@type": "Person",
+        "name": "Wolf",
+        "url": "https://wolfprojects.netlify.app/",
+        "description": "An aspiring developer creating simple web applications for students and immersive game experiences on Roblox.",
+        "knowsAbout": ["Web Development", "JavaScript", "HTML", "CSS", "Lua", "Game Development"]
+      },
+      "headline": "Wolf's Portfolio | Student Apps & Roblox Game Creations"
+    }
+    </script>
   </head>
   <body>
     <nav class="navbar">
@@ -45,28 +61,42 @@
         <a href="#top" class="nav-brand-link">
           <div class="nav-brand">Wolf</div>
         </a>
-        <div class="nav-links">
-          <a href="#apps">Apps</a>
-          <a href="#about">About</a>
-          <a href="contact.html">Contact</a>
-          <a href="https://github.com/thejeXD" target="_blank">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
-              />
-            </svg>
-          </a>
-          <button
-            class="theme-toggle"
-            onclick="toggleTheme()"
-            id="theme-toggle"
+
+        <button
+          class="nav-toggle"
+          id="nav-toggle"
+          aria-label="Open navigation menu"
+          aria-controls="nav-links"
+          aria-expanded="false"
+        >
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+
+        <div class="nav-links" id="nav-links" data-visible="false">
+          <a href="#apps" class="nav-link">Apps</a>
+          <a href="#about" class="nav-link">About</a>
+          <a href="contact.html" class="nav-link">Contact</a>
+          <a
+            href="https://github.com/thejeXD"
+            target="_blank"
+            class="nav-link"
+            aria-label="GitHub Profile"
           >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+            </svg>
+            <span class="nav-link-text">GitHub</span>
+          </a>
+          <button class="theme-toggle" onclick="toggleTheme()" id="theme-toggle" aria-label="Toggle color theme">
             <svg
               width="20"
               height="20"
               viewBox="0 0 24 24"
               fill="currentColor"
               id="theme-icon"
+              aria-hidden="true"
             >
               <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
             </svg>
@@ -77,15 +107,15 @@
 
     <header class="hero">
       <div class="hero-content">
-        <h1 class="hero-title">Welcome to My Apps</h1>
+        <h1 class="hero-title">Simple Apps & Creative Projects</h1>
         <p class="hero-subtitle">
-          Simple tools built for students and productivity enthusiasts
+          Productivity tools for students and immersive Roblox game creations.
         </p>
         <a href="#apps" class="cta-button">Explore Apps</a>
       </div>
     </header>
 
-    <section id="apps" class="apps-section">
+    <section id="apps" class="apps-section fade-in-on-scroll">
       <div class="container">
         <h2 class="section-title">My Applications</h2>
         <div class="apps-grid">
@@ -240,7 +270,7 @@
       </div>
     </section>
 
-    <section id="about" class="about-section">
+    <section id="about" class="about-section fade-in-on-scroll">
       <div class="container">
         <h2 class="section-title">About</h2>
 
@@ -302,40 +332,42 @@
         <div class="game-previews-section">
           <h3 class="game-previews-title">My Roblox Creations:</h3>
 
-          <div
-            id="image-track"
-            class="image-track"
-            data-mouse-down-at="0"
-            data-prev-percentage="0"
-          >
-            <img
-              class="track-image"
-              src="assets/asset1.png"
-              draggable="false"
-              data-name="Wolf Hangout V2"
-              data-link="https://www.roblox.com/games/your-game-id-1"
-              alt="Preview of Roblox game: Wolf Hangout V2"
-            />
+          <div class="image-track-container">
+            <div
+              id="image-track"
+              class="image-track"
+              data-mouse-down-at="0"
+              data-prev-percentage="0"
+            >
+              <img
+                class="track-image"
+                src="assets/asset1.png"
+                draggable="false"
+                data-name="Wolf Hangout V2"
+                data-link="https://www.roblox.com/games/your-game-id-1"
+                alt="Preview of Roblox game: Wolf Hangout V2"
+              />
 
-            <img
-              class="track-image"
-              src="assets/asset2.png"
-              draggable="false"
-              data-name="The Wolf's Labyrinth"
-              data-description="A challenging adventure/puzzle map focused on complex Lua scripting and environment interaction."
-              data-link="https://www.roblox.com/games/your-game-id-2"
-              alt="Preview of Roblox game: The Wolf's Labyrinth"
-            />
+              <img
+                class="track-image"
+                src="assets/asset2.png"
+                draggable="false"
+                data-name="The Wolf's Labyrinth"
+                data-description="A challenging adventure/puzzle map focused on complex Lua scripting and environment interaction."
+                data-link="https://www.roblox.com/games/your-game-id-2"
+                alt="Preview of Roblox game: The Wolf's Labyrinth"
+              />
 
-            <img
-              class="track-image"
-              src="assets/asset5.png"
-              draggable="false"
-              data-name="Racing Pro"
-              data-description="High-speed racing game with custom cars, leaderboards, and detailed track modeling."
-              data-link="https://www.roblox.com/games/your-game-id-3"
-              alt="Preview of Roblox game: Racing Pro"
-            />
+              <img
+                class="track-image"
+                src="assets/asset5.png"
+                draggable="false"
+                data-name="Racing Pro"
+                data-description="High-speed racing game with custom cars, leaderboards, and detailed track modeling."
+                data-link="https://www.roblox.com/games/your-game-id-3"
+                alt="Preview of Roblox game: Racing Pro"
+              />
+            </div>
           </div>
 
           <p class="track-hint">Drag or swipe the images to explore my work.</p>
@@ -361,7 +393,7 @@
       </div>
     </div>
 
-    <footer class="footer">
+    <footer class="footer fade-in-on-scroll">
       <div class="container">
         <p>Created by Wolf with ❤️</p>
         <p class="footer-links">
@@ -376,5 +408,19 @@
         <p class="copyright">© 2025 All Rights Reserved</p>
       </div>
     </footer>
+
+    <a href="#top" id="back-to-top-btn" class="back-to-top-btn" aria-label="Go back to top">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      ><path d="M12 19V5M5 12l7-7 7 7" /></svg>
+    </a>
   </body>
 </html>

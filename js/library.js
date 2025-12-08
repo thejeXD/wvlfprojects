@@ -64,19 +64,38 @@ const noResultsMessage = document.getElementById('no-results');
 
 // --- 1. Rendering Functions ---
 
+// Map tags to their corresponding CSS classes for colors
+const tagClassMapping = {
+    'education': 'tag-keyword',
+    'calculator': 'tag-func',
+    'student': 'tag-keyword',
+    'utility': 'tag-string',
+    'fun': 'tag-var',
+    'finance': 'tag-number',
+    'random': 'tag-var',
+    'social': 'tag-var',
+    'api': 'tag-number',
+    'roblox': 'tag-keyword',
+    'hangout': 'tag-var',
+    'adventure': 'tag-func',
+    'puzzle': 'tag-func',
+    'racing': 'tag-string',
+    'simulation': 'tag-string',
+    'gamedev': 'tag-keyword', // Default for game dev
+};
+
 function createTagHTML(tags) {
-    // You can modify this to apply your colorful tag classes
-    return tags.map(tag => `<span class="tag tag-keyword">${tag}</span>`).join('');
+    return tags.map(tag => {
+        const tagClass = tagClassMapping[tag.toLowerCase()] || 'tag-keyword'; // Default to keyword style
+        return `<span class="tag ${tagClass}">${tag}</span>`;
+    }).join('');
 }
 
 function renderCard(project) {
-    const isExternal = project.link.startsWith('http');
-    const linkHref = isExternal ? project.link : `../${project.link}`; // Adjust path if needed
-    
     return `
-        <a href="${linkHref}" class="app-card-link" ${isExternal ? 'target="_blank"' : ''}>
+        <a href="${project.link}" class="app-card-link" ${project.link.startsWith('http') ? 'target="_blank"' : ''}>
             <div class="app-card">
-                <img src="../${project.image}" alt="${project.name} Thumbnail" class="app-thumbnail" />
+                <img src="${project.image}" alt="${project.name} Thumbnail" class="app-thumbnail" />
                 <h3 class="app-title">${project.name}</h3>
                 <p class="app-description">${project.description}</p>
                 <div class="app-tags">${createTagHTML(project.tags)}</div>

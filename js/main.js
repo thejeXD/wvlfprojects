@@ -41,6 +41,12 @@ function applyTheme() {
     }
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    const themeToggleButton = document.getElementById('theme-toggle');
+    if (themeToggleButton) {
+        themeToggleButton.addEventListener('click', toggleTheme);
+    }
+});
 // Show app info with SweetAlert
 function showAppInfo(appName) {
     if (appName === "grade-calculator") {
@@ -94,13 +100,41 @@ function showAppInfo(appName) {
 
 // Coming soon alert
 function comingSoonAlert() {
-    Swal.fire({
-        title: "Coming Soon!",
-        text: "This app is currently under development. Check back later for updates!",
-        icon: "info",
-        confirmButtonText: "Okay",
+  Swal.fire({
+    title: "Get Notified!",
+    text: "Enter your email below to be notified when this app is released.",
+    input: "email",
+    inputPlaceholder: "you@example.com",
+    showCancelButton: true,
+    confirmButtonText: "Notify Me &rarr;",
+    confirmButtonColor: "#2563eb",
+    cancelButtonText: "Cancel",
+    showLoaderOnConfirm: true,
+    preConfirm: (email) => {
+      // Here you would typically send the email to your backend or a mailing list service.
+      // For this example, we'll just simulate a network request.
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            resolve();
+          } else {
+            Swal.showValidationMessage("Please enter a valid email address");
+            resolve();
+          }
+        }, 1000); // Simulate a 1-second delay
+      });
+    },
+    allowOutsideClick: () => !Swal.isLoading(),
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        title: "You're on the list!",
+        text: `We'll notify you at ${result.value} when the app is ready.`,
+        icon: "success",
         confirmButtonColor: "#2563eb",
-    });
+      });
+    }
+  });
 }
 
 // Smooth scroll
@@ -123,6 +157,9 @@ const track = document.getElementById("image-track");
 const getPercentage = (delta, maxDelta) => (delta / maxDelta) * -100;
 
 if (track) {
+    // Only enable JS-based sliding on screens wider than 768px
+    const isDesktop = window.matchMedia("(min-width: 769px)").matches;
+
     window.onmousedown = e => {
         // Record the starting point of the mouse drag
         track.dataset.mouseDownAt = e.clientX;
@@ -135,6 +172,9 @@ if (track) {
     }
 
     window.onmousemove = e => {
+        // Exit if not on desktop
+        if (!isDesktop) return;
+
         // Only run if the mouse is currently held down (dragging)
         if(track.dataset.mouseDownAt === "0") return;
 
@@ -179,6 +219,9 @@ if (track) {
     }
     
     track.ontouchmove = e => {
+        // Exit if not on desktop
+        if (!isDesktop) return;
+
         if(track.dataset.mouseDownAt === "0") return;
         
         const mouseDownAt = parseFloat(track.dataset.mouseDownAt);
@@ -305,6 +348,85 @@ if (modal) {
         }
     }
 }
+
+// ==================== MOBILE NAVIGATION ====================
+const navToggle = document.getElementById('nav-toggle');
+const navLinks = document.getElementById('nav-links');
+
+if (navToggle && navLinks) {
+    navToggle.addEventListener('click', () => {
+        const isVisible = navLinks.getAttribute('data-visible') === 'true';
+
+        if (isVisible) {
+            // Close the menu
+            navLinks.setAttribute('data-visible', 'false');
+            navToggle.setAttribute('aria-expanded', 'false');
+            navToggle.setAttribute('aria-label', 'Open navigation menu');
+            document.body.classList.remove('nav-open');
+        } else {
+            // Open the menu
+            navLinks.setAttribute('data-visible', 'true');
+            navToggle.setAttribute('aria-expanded', 'true');
+            navToggle.setAttribute('aria-label', 'Close navigation menu');
+            document.body.classList.add('nav-open');
+        }
+    });
+
+    // Close menu when a link is clicked
+    navLinks.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            const isVisible = navLinks.getAttribute('data-visible') === 'true';
+            if (isVisible) {
+                navLinks.setAttribute('data-visible', 'false');
+                navToggle.setAttribute('aria-expanded', 'false');
+                navToggle.setAttribute('aria-label', 'Open navigation menu');
+                document.body.classList.remove('nav-open');
+            }
+        });
+    });
+}
+
+// ==================== SCROLL-IN ANIMATIONS ====================
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            // Optional: Unobserve the element after it has become visible
+            // This is a performance optimization as we don't need to watch it anymore.
+            observer.unobserve(entry.target);
+        }
+    });
+}, {
+    // Options for the observer
+    root: null, // relative to the viewport
+    rootMargin: '0px',
+    threshold: 0.1 // Trigger when 10% of the element is visible
+});
+
+// Find all elements to animate and start observing them
+const elementsToAnimate = document.querySelectorAll('.fade-in-on-scroll');
+elementsToAnimate.forEach(element => {
+    observer.observe(element);
+});
+
+// ==================== BACK TO TOP BUTTON ====================
+const backToTopButton = document.getElementById("back-to-top-btn");
+
+if (backToTopButton) {
+    window.addEventListener("scroll", () => {
+        // Show button if user has scrolled down more than 300px
+        if (window.scrollY > 300) {
+            backToTopButton.classList.add("visible");
+        } else {
+            backToTopButton.classList.remove("visible");
+        }
+    });
+
+    // The existing smooth scroll logic will handle the click event
+    // because the button is an anchor with href="#top".
+    // No extra click handler is needed here.
+}
+
 
 // Apply theme on load
 window.addEventListener("DOMContentLoaded", applyTheme);
