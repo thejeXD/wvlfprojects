@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts for Meme Generator -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Lobster&family=Montserrat:wght@700&family=Oswald:wght@700&display=swap" rel="stylesheet">
+
+    <title>Image Toolbox | Wolf's Projects</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/image-editor.css">
+    <link rel="icon" href="../assets/favicon.ico" type="image/x-icon" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <nav class="navbar">
+      <div class="nav-container">
+        <a href="../index.html" class="nav-brand-link">
+          <div class="nav-brand">Wolf</div>
+        </a>
+
+        <button
+          class="nav-toggle"
+          id="nav-toggle"
+          aria-label="Open navigation menu"
+          aria-controls="nav-links"
+          aria-expanded="false"
+        >
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+
+        <div class="nav-links" id="nav-links" data-visible="false">
+          <a href="../index.html#apps" class="nav-link">Apps</a>
+          <a href="../index.html#about" class="nav-link">About</a>
+          <a href="../contact.html" class="nav-link">Contact</a>
+          <a
+            href="https://github.com/thejeXD"
+            target="_blank"
+            class="nav-link"
+            aria-label="GitHub Profile"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+            </svg>
+            <span class="nav-link-text">GitHub</span>
+          </a>
+          <button class="theme-toggle" id="theme-toggle" aria-label="Toggle color theme">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" id="theme-icon" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <main class="app-container">
+        <h1 class="app-title-header">Image Toolbox</h1>
+        <div class="header-meta">
+            <p class="app-subtitle-header">A versatile editor for memes, adjustments, and other image utilities.</p>
+            <span class="status-badge status-wip">WORK IN PROGRESS </span>
+            <span class="last-updated">Last Updated: Oct 2024</span>
+        </div>
+        <div class="editor-layout">
+            <div class="main-controls">
+                <div class="upload-panel">
+                    <h2>1. Add an Image</h2>
+                    <div class="upload-options">
+                        <label for="imageLoader" class="upload-btn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <span>Choose File</span>
+                        </label>
+                        <input type="file" id="imageLoader" accept="image/*" style="display: none;">
+                        <div id="fileNameDisplay" class="file-name-display">No file chosen</div>
+                    </div>
+
+                    <div class="url-input-group">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg>
+                        <input type="text" id="imageUrl" placeholder="Or paste an image URL">
+                    </div>
+
+                    <p class="upload-hint">You can also drag & drop an image onto the canvas, or paste from your clipboard (Ctrl+V).</p>
+                </div>
+
+                <div class="tool-container">
+                    <div class="tool-tabs">
+                        <button class="tool-tab-btn active" data-tool="meme">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-1.168-1.168l-5.488 5.488-1.518-1.518a1 1 0 0 0-1.414 0l-3.536 3.536a1 1 0 0 0 0 1.414l1.518 1.518-5.488 5.488a1 1 0 0 0 1.168 1.168l5.488-5.488 1.518 1.518a1 1 0 0 0 1.414 0l3.536-3.536a1 1 0 0 0 0-1.414l-1.518-1.518z"></path></svg>
+                            <span>Meme</span>
+                        </button>
+                        <button class="tool-tab-btn" data-tool="adjust">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                            <span>Adjust</span>
+                        </button>
+                        <button class="tool-tab-btn" data-tool="crop">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.13 1L6 16a2 2 0 0 0 2 2h15"></path><path d="M1 6.13L16 6a2 2 0 0 1 2 2v15"></path></svg>
+                            <span>Crop</span>
+                        </button>
+                    </div>
+
+                    <div class="tool-panel active" id="meme-tool-panel">
+                        <div class="controls" id="meme-controls">
+                            <h2>2. Add Text</h2>
+                            <input type="text" id="topText" placeholder="Top Text">
+                            <input type="text" id="bottomText" placeholder="Bottom Text">
+                
+                            <h2>3. Customize</h2>
+                            <div class="control-group">
+                                <label for="fontSizeSlider">Font Size:</label>
+                                <input type="range" id="fontSizeSlider" min="10" max="150" value="50" class="slider">
+                                <input type="number" id="fontSizeInput" min="10" max="150" value="50" class="slider-value">
+                            </div>
+                            <div class="control-group">
+                                <label for="strokeWidthSlider">Stroke:</label>
+                                <input type="range" id="strokeWidthSlider" min="0" max="20" value="2" step="0.5" class="slider">
+                                <input type="number" id="strokeWidthInput" min="0" max="20" value="2" step="0.5" class="slider-value">
+                            </div>
+                            <div class="control-group">
+                                <label for="lineHeightSlider">Line Height:</label>
+                                <input type="range" id="lineHeightSlider" min="0.8" max="2.5" value="1.2" step="0.1" class="slider">
+                                <input type="number" id="lineHeightInput" min="0.8" max="2.5" value="1.2" step="0.1" class="slider-value">
+                            </div>
+                            <div class="control-group">
+                                <label for="textColor">Text Color:</label>
+                                <input type="color" id="textColor" value="#FFFFFF">
+                            </div>
+                            <div class="control-group">
+                                <label for="strokeColor">Stroke Color:</label>
+                                <input type="color" id="strokeColor" value="#000000">
+                            </div>
+                            <div class="control-group">
+                                <label for="fontFamily">Font:</label> 
+                                <select id="fontFamily">
+                                    <option value="Impact">Impact</option>
+                                    <option value="Anton">Anton</option>
+                                    <option value="Bebas Neue">Bebas Neue</option>
+                                    <option value="Oswald">Oswald</option>
+                                    <option value="Montserrat">Montserrat</option>
+                                    <option value="Lobster">Lobster</option>
+                                    <option value="Arial">Arial</option>
+                                    <option value="Comic Sans MS">Comic Sans MS</option>
+                                </select>
+                            </div>
+                
+                            <h2>4. Watermark</h2>
+                            <div class="watermark-type-selector">
+                                <input type="radio" name="watermarkType" id="watermarkTypeText" value="text" checked><label for="watermarkTypeText">Text</label>
+                                <input type="radio" name="watermarkType" id="watermarkTypeImage" value="image"><label for="watermarkTypeImage">Image</label>
+                            </div>
+
+                            <div id="textWatermarkSettings">
+                                <input type="text" id="watermarkText" placeholder="Watermark Text">
+                                <div class="control-group">
+                                    <label for="watermarkTextSizeSlider">Size:</label>
+                                    <input type="range" id="watermarkTextSizeSlider" min="10" max="100" value="20" class="slider">
+                                    <input type="number" id="watermarkTextSizeInput" min="10" max="100" value="20" class="slider-value">
+                                </div>
+                            </div>
+
+                            <div id="imageWatermarkSettings" style="display: none;">
+                                <label for="watermarkImageLoader" class="upload-btn small-upload-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                                    <span>Choose Image</span>
+                                </label>
+                                <input type="file" id="watermarkImageLoader" accept="image/*" style="display: none;">
+                            </div>
+
+                            <!-- Shared Watermark Settings -->
+                            <div class="control-group">
+                                <label for="watermarkOpacitySlider">Opacity:</label>
+                                <input type="range" id="watermarkOpacitySlider" min="0" max="1" value="0.5" step="0.05" class="slider">
+                                <input type="number" id="watermarkOpacityInput" min="0" max="1" value="0.5" step="0.05" class="slider-value">
+                            </div>
+                            <div class="control-group" id="watermarkImageSizeContainer" style="display: none;">
+                                <label for="watermarkImageSizeSlider">Size:</label>
+                                <input type="range" id="watermarkImageSizeSlider" min="20" max="300" value="100" class="slider">
+                                <input type="number" id="watermarkImageSizeInput" min="20" max="300" value="100" class="slider-value">
+                            </div>
+                            <div class="control-group">
+                                <label for="watermarkRotationSlider">Rotation:</label>
+                                <input type="range" id="watermarkRotationSlider" min="-180" max="180" value="0" class="slider">
+                                <input type="number" id="watermarkRotationInput" min="-180" max="180" value="0" class="slider-value">
+                            </div>
+
+                            <!-- Undo/Redo Actions -->
+                            <div class="action-buttons-group">
+                                <button id="undoBtn" class="action-btn secondary-action" title="Undo (Ctrl+Z)" disabled>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 13v-2a4 4 0 0 0-4-4H8L12 3"></path><path d="M3 13h6a4 4 0 0 0 4-4V3"></path></svg>
+                                </button>
+                                <button id="redoBtn" class="action-btn secondary-action" title="Redo (Ctrl+Y)" disabled>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13v-2a4 4 0 0 1 4-4h11l-4 4"></path><path d="M21 13h-6a4 4 0 0 1-4-4V3"></path></svg>
+                                </button>
+                            </div>
+
+                            <button id="downloadBtn">Download Meme</button>
+                        </div>
+                    </div>
+
+                    <div class="tool-panel" id="adjust-tool-panel">
+                        <div class="tool-controls-panel">
+                            <h3>Image Adjustments</h3>
+                            <p>Fine-tune the look of your image using the controls below.</p>
+
+                            <div class="control-group">
+                                <label for="brightnessSlider">Brightness:</label>
+                                <input type="range" id="brightnessSlider" min="0" max="200" value="100" class="slider">
+                                <input type="number" id="brightnessInput" min="0" max="200" value="100" class="slider-value">
+                            </div>
+                            <div class="control-group">
+                                <label for="contrastSlider">Contrast:</label>
+                                <input type="range" id="contrastSlider" min="0" max="200" value="100" class="slider">
+                                <input type="number" id="contrastInput" min="0" max="200" value="100" class="slider-value">
+                            </div>
+                            <div class="control-group">
+                                <label for="saturateSlider">Saturation:</label>
+                                <input type="range" id="saturateSlider" min="0" max="200" value="100" class="slider">
+                                <input type="number" id="saturateInput" min="0" max="200" value="100" class="slider-value">
+                            </div>
+                            <div class="control-group">
+                                <label for="grayscaleSlider">Grayscale:</label>
+                                <input type="range" id="grayscaleSlider" min="0" max="100" value="0" class="slider">
+                                <input type="number" id="grayscaleInput" min="0" max="100" value="0" class="slider-value">
+                            </div>
+                            <div class="control-group">
+                                <label for="sepiaSlider">Sepia:</label>
+                                <input type="range" id="sepiaSlider" min="0" max="100" value="0" class="slider">
+                                <input type="number" id="sepiaInput" min="0" max="100" value="0" class="slider-value">
+                            </div>
+
+                            <button id="resetAdjustmentsBtn" class="action-btn secondary-action">Reset Adjustments</button>
+                        </div>
+                    </div>
+
+                    <div class="tool-panel" id="crop-tool-panel" style="display: none;">
+                        <div class="tool-controls-panel">
+                            <h3>Crop Image</h3>
+                            <p>Click and drag the selection box on the image to define your crop area. Use the handles to resize.</p>
+                            <button id="applyCropBtn" class="action-btn">Apply Crop</button>
+                            <button id="cancelCropBtn" class="action-btn secondary-action">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="canvas-container">
+                <div class="canvas-wrapper">
+                    <button id="clearImageBtn" class="clear-image-btn" title="Clear Image">&times;</button>
+                    <canvas id="memeCanvas" width="500" height="500"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>Created by Wolf with ❤️</p>
+        <p class="footer-links">
+          <a
+            href="https://github.com/thejeXD/wvlfgradecalculator"
+            target="_blank"
+            >GitHub</a
+          >
+          <span>•</span>
+          <a href="../contact.html">Contact</a>
+        </p>
+        <p class="copyright">© 2025 All Rights Reserved</p>
+      </div>
+    </footer>
+
+    <a href="#top" id="back-to-top-btn" class="back-to-top-btn" aria-label="Go back to top">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
+    </a>
+
+    <!-- 
+      Load main.js for shared functionality like theme toggling and nav behavior.
+      Load the app-specific script after.
+    -->
+    <script src="../js/main.js" defer></script> 
+    <script src="../js/image-editor.js" defer></script>
+</body>
+</html>

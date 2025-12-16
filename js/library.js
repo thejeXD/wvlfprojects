@@ -27,7 +27,25 @@ const ALL_PROJECTS = [
         image: 'assets/thumb-instagram.png',
         tags: ['Utility', 'Social', 'API']
     },
-    // 4. Roblox Game 1 (from your HTML)
+    // 4. Web App
+    {
+        type: 'app',
+        name: 'Instagram Mockup',
+        description: 'Preview Instagram posts with verified badges, custom formats (Square, Portrait, Landscape), and dark mode.',
+        link: 'apps/instagram-mockup.html',
+        image: 'assets/thumb-mockup.png',
+        tags: ['Social', 'Design', 'Utility', 'Mockup']
+    },
+    // 5. Web App
+    {
+        type: 'app',
+        name: 'Instagram Mockup',
+        description: 'Preview Instagram posts with verified badges, custom formats (Square, Portrait, Landscape), and dark mode.',
+        link: 'apps/instagram-mockup.html',
+        image: 'assets/thumb-mockup.png',
+        tags: ['Social', 'Design', 'Utility', 'Mockup']
+    },
+    // 5. Roblox Game 1 (from your HTML)
     {
         type: 'game',
         name: 'Wolf Hangout V2',
