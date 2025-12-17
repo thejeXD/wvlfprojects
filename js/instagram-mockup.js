@@ -10,6 +10,9 @@ class InstagramMockupApp {
             caption: 'Creating something amazing! 🐺 #design #mockup',
             likes: '1,234',
             timestamp: '2 HOURS AGO',
+            following: '15',
+            bio: 'Digital Creator 🎨\nCreating awesome tools for you.\nwolfprojects.netlify.app',
+            storyRingColor: '#dbdbdb',
             verified: true,
             verifiedCaption: false,
             format: 'square', // square, portrait, landscape
@@ -45,6 +48,9 @@ class InstagramMockupApp {
         this.dom.captionCharCount = document.getElementById('caption-char-count');
         this.dom.likesInput = document.getElementById('input-likes');
         this.dom.timestampInput = document.getElementById('input-timestamp');
+        this.dom.followingInput = document.getElementById('input-following');
+        this.dom.bioInput = document.getElementById('input-bio');
+        this.dom.storyRingColorInput = document.getElementById('input-story-ring-color');
         
         // Toggles & Selects
         this.dom.verifiedInput = document.getElementById('input-verified');
@@ -82,6 +88,13 @@ class InstagramMockupApp {
         this.dom.pCaption = document.getElementById('preview-caption');
         this.dom.pLikes = document.getElementById('preview-likes');
         this.dom.pTimestamp = document.getElementById('preview-timestamp');
+        
+        this.dom.previewPanel = document.querySelector('.preview-panel');
+        this.dom.sidePanels = document.querySelector('.side-panels');
+        this.dom.finalPreviewBtn = document.getElementById('btn-final-preview');
+        this.dom.finalPreviewModal = document.getElementById('final-preview-modal');
+        this.dom.closePreviewBtn = document.getElementById('close-preview-btn');
+        this.dom.finalPreviewContent = this.dom.finalPreviewModal ? this.dom.finalPreviewModal.querySelector('.final-preview-content') : null;
 
         // Actions
 
@@ -92,7 +105,7 @@ class InstagramMockupApp {
 
     _bindEvents() {
         // Text Input Listeners
-        const textInputs = ['username', 'location', 'caption', 'likes', 'timestamp'];
+        const textInputs = ['username', 'location', 'caption', 'likes', 'timestamp', 'following', 'bio'];
         textInputs.forEach(key => {
             const input = this.dom[`${key}Input`];
             if (input) {
@@ -139,6 +152,14 @@ class InstagramMockupApp {
             });
         }
 
+        // Story Ring Color
+        if (this.dom.storyRingColorInput) {
+            this.dom.storyRingColorInput.addEventListener('input', (e) => {
+                this.state.storyRingColor = e.target.value;
+                this._saveState();
+            });
+        }
+
         // Image Uploads
         if (this.dom.profileUpload) {
             this.dom.profileUpload.addEventListener('change', (e) => this._handleImageUpload(e, 'profileImage'));
@@ -154,6 +175,27 @@ class InstagramMockupApp {
         if (this.dom.saveDraftBtn) {
             this.dom.saveDraftBtn.addEventListener('click', () => this._saveDraft());
         }
+        
+        // Final Preview
+        if (this.dom.finalPreviewBtn) {
+            this.dom.finalPreviewBtn.addEventListener('click', () => this._openFinalPreview());
+        }
+        if (this.dom.closePreviewBtn) {
+            this.dom.closePreviewBtn.addEventListener('click', () => this._closeFinalPreview());
+        }
+        if (this.dom.finalPreviewModal) {
+            this.dom.finalPreviewModal.addEventListener('click', (e) => {
+                if (e.target === this.dom.finalPreviewModal || e.target === this.dom.finalPreviewContent) {
+                    this._closeFinalPreview();
+                }
+            });
+        }
+        // Add Escape key listener
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.dom.finalPreviewModal && this.dom.finalPreviewModal.classList.contains('open')) {
+                this._closeFinalPreview();
+            }
+        });
 
         // Clear Layers
         if (this.dom.clearLayersBtn) {
@@ -208,6 +250,120 @@ class InstagramMockupApp {
 
             this.dom.previewCard.addEventListener('drop', (e) => this._handleDrop(e));
         }
+    }
+
+    _openFinalPreview() {
+        if (!this.dom.previewCard || !this.dom.finalPreviewContent) return;
+
+        // Build Profile View HTML
+        const profileImg = this.state.profileImage || '../assets/logo.png';
+        const postImg = this.state.postImages.length > 0 
+            ? (typeof this.state.postImages[0] === 'string' ? this.state.postImages[0] : this.state.postImages[0].src)
+            : '../assets/thumb-instagram.png';
+            
+
+        const isVerifiedHTML = this.state.verified ? 
+            `<svg class="ig-verified-badge" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 18px; height: 18px; margin-left: 5px;"><path fill-rule="evenodd" clip-rule="evenodd" d="M20 0C31.0457 0 40 8.9543 40 20C40 31.0457 31.0457 40 20 40C8.9543 40 0 31.0457 0 20C0 8.9543 8.9543 0 20 0ZM16.3636 29.0909L30.9091 14.5455L28 11.6364L16.3636 23.2727L12 18.9091L9.09091 21.8182L16.3636 29.0909Z" fill="#3897F0"/></svg>` 
+            : '';
+
+        const html = `
+            <div class="ig-profile-view ${this.state.darkMode ? 'dark-mode' : ''}">
+                <div class="ig-profile-header">
+                    <div class="ig-header-top">
+                        <div class="ig-profile-avatar-container">
+                            <img src="${profileImg}" class="ig-profile-avatar">
+                        </div>
+                        <div class="ig-profile-stats">
+                            <div class="ig-stat-item">
+                                <span class="ig-stat-count">1</span>
+                                <span class="ig-stat-label">posts</span>
+                            </div>
+                            <div class="ig-stat-item">
+                                <span class="ig-stat-count">${this.state.likes}</span>
+                                <span class="ig-stat-label">followers</span>
+                            </div>
+                            <div class="ig-stat-item">
+                                <span class="ig-stat-count">${this.state.following}</span>
+                                <span class="ig-stat-label">following</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="ig-profile-bio">
+                        <div class="ig-profile-name-row">
+                            <span class="ig-profile-realname">${this.state.username}</span>
+                            ${isVerifiedHTML}
+                        </div>
+                        <div class="ig-profile-biotext">${this.state.bio.replace(/\n/g, '<br>')}</div>
+                    </div>
+
+                    <div class="ig-profile-actions">
+                        <button id="btn-follow" class="ig-profile-btn ig-primary-btn">Follow</button>
+                        <button class="ig-profile-btn">Message</button>
+                        <button class="ig-profile-btn ig-icon-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="ig-profile-stories">
+                    <div class="ig-story-item"><div class="ig-story-ring" style="border-color: ${this.state.storyRingColor}"><div class="ig-story-placeholder"></div></div><span>New</span></div>
+                    <div class="ig-story-item"><div class="ig-story-ring" style="border-color: ${this.state.storyRingColor}"><div class="ig-story-placeholder"></div></div><span>Design</span></div>
+                    <div class="ig-story-item"><div class="ig-story-ring" style="border-color: ${this.state.storyRingColor}"><div class="ig-story-placeholder"></div></div><span>Life</span></div>
+                </div>
+
+                <div class="ig-profile-tabs">
+                    <div class="ig-tab active">
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9.015" y1="3" x2="9.015" y2="21"></line><line x1="14.985" y1="3" x2="14.985" y2="21"></line><line x1="21" y1="9.015" x2="3" y2="9.015"></line><line x1="21" y1="14.985" x2="3" y2="14.985"></line></svg>
+                        <span>POSTS</span>
+                    </div>
+                    <div class="ig-tab">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                        <span>REELS</span>
+                    </div>
+                    <div class="ig-tab">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        <span>TAGGED</span>
+                    </div>
+                </div>
+
+                <div class="ig-profile-grid">
+                    <!-- The Mockup Post -->
+                    <div class="ig-grid-item highlight">
+                        <img src="${postImg}" alt="Latest Post">
+                        ${this.state.postImages.length > 1 ? '<div class="ig-carousel-icon"><svg fill="currentColor" viewBox="0 0 48 48" width="100%" height="100%"><path d="M34.8 29.7V11c0-2.9-2.3-5.2-5.2-5.2H11c-2.9 0-5.2 2.3-5.2 5.2v18.7c0 2.9 2.3 5.2 5.2 5.2h18.7c2.8-.1 5.1-2.4 5.1-5.2zM38.2 15h-3.4v14.7c0 1.9-1.5 3.4-3.4 3.4H16.7c-.6 4.3 2.7 8.2 7 8.8 4.8.6 8.9-2.8 9.5-7.5.1-.9.1-1.9.1-2.9V15z"></path><path d="M42.4 19.5h-3.4V33c0 1.9-1.5 3.4-3.4 3.4H20.8c-.6 4.3 2.7 8.2 7 8.8 4.8.6 8.9-2.8 9.5-7.5.2-.9.2-1.9.2-2.9V19.5z"></path></svg></div>' : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        this.dom.finalPreviewContent.innerHTML = html;
+
+        const followBtn = this.dom.finalPreviewContent.querySelector('#btn-follow');
+        if (followBtn) {
+            followBtn.addEventListener('click', () => {
+                if (followBtn.classList.contains('following')) {
+                    followBtn.classList.remove('following');
+                    followBtn.classList.add('ig-primary-btn');
+                    followBtn.textContent = 'Follow';
+                } else {
+                    followBtn.classList.add('following');
+                    followBtn.classList.remove('ig-primary-btn');
+                    followBtn.textContent = 'Following';
+                }
+            });
+        }
+        
+        this.dom.finalPreviewModal.classList.add('open');
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+
+    _closeFinalPreview() {
+        this.dom.finalPreviewModal.classList.remove('open');
+        document.body.style.overflow = '';
+        setTimeout(() => {
+            if (this.dom.finalPreviewContent) this.dom.finalPreviewContent.innerHTML = '';
+        }, 300);
     }
 
     _initSortable() {
@@ -341,6 +497,14 @@ class InstagramMockupApp {
             this._updatePreview();
             this._renderLayers();
             this._renderRecentlyDeleted();
+
+            if (this.state.recentlyDeleted.length === 0) {
+                const panel = this.dom.recentlyDeletedPanel;
+                const btn = this.dom.toggleDeletedBtn;
+                if (panel) panel.classList.remove('open');
+                if (btn) btn.classList.remove('active');
+            }
+
             this._saveState();
         }
     }
@@ -370,6 +534,14 @@ class InstagramMockupApp {
             this._updatePreview();
             this._renderLayers();
             this._renderRecentlyDeleted();
+
+            if (this.state.recentlyDeleted.length === 0) {
+                const panel = this.dom.recentlyDeletedPanel;
+                const btn = this.dom.toggleDeletedBtn;
+                if (panel) panel.classList.remove('open');
+                if (btn) btn.classList.remove('active');
+            }
+
             this._saveState();
         }
     }
@@ -445,8 +617,8 @@ class InstagramMockupApp {
             item.innerHTML = `
                 <img src="${src}" class="layer-thumb">
                 <div class="layer-info">
-                    <div class="layer-name" title="${name}">
-                        ${name}
+                    <div class="layer-name-row">
+                        <span class="layer-name" title="${name}">${name}</span>
                         ${isDuplicate ? '<span class="duplicate-tag">Duplicate</span>' : ''}
                     </div>
                     ${size ? `<div class="layer-size">${size}</div>` : ''}
@@ -466,7 +638,19 @@ class InstagramMockupApp {
             // Delete event
             item.querySelector('.layer-delete').addEventListener('click', (e) => {
                 e.stopPropagation();
-                this._deleteLayer(index);
+                Swal.fire({
+                    title: 'Delete Layer?',
+                    text: "Move this image to Recently Deleted?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonText: 'Cancel',
+                    confirmButtonText: 'Yes, delete'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this._deleteLayer(index);
+                    }
+                });
             });
             
             this.dom.layersList.appendChild(item);
@@ -478,6 +662,14 @@ class InstagramMockupApp {
 
         if (this.dom.clearDeletedPermanentlyBtn) {
             this.dom.clearDeletedPermanentlyBtn.style.display = this.state.recentlyDeleted.length > 0 ? 'block' : 'none';
+        }
+
+        if (this.dom.toggleDeletedBtn) {
+            const count = this.state.recentlyDeleted.length;
+            const span = this.dom.toggleDeletedBtn.querySelector('span');
+            if (span) {
+                span.textContent = count > 0 ? `Recently Deleted (${count})` : 'Recently Deleted';
+            }
         }
 
         this.dom.recentlyDeletedContainer.innerHTML = '';
@@ -520,12 +712,12 @@ class InstagramMockupApp {
         const btn = this.dom.toggleDeletedBtn;
         if (!panel || !btn) return;
 
-        if (panel.style.display === 'none') {
-            panel.style.display = 'block';
+        if (!panel.classList.contains('open')) {
+            panel.classList.add('open');
             btn.classList.add('active');
             this._renderRecentlyDeleted(); // Ensure it's up-to-date when shown
         } else {
-            panel.style.display = 'none';
+            panel.classList.remove('open');
             btn.classList.remove('active');
         }
     }
@@ -544,6 +736,12 @@ class InstagramMockupApp {
             if (result.isConfirmed) {
                 this.state.recentlyDeleted = [];
                 this._renderRecentlyDeleted();
+                
+                const panel = this.dom.recentlyDeletedPanel;
+                const btn = this.dom.toggleDeletedBtn;
+                if (panel) panel.classList.remove('open');
+                if (btn) btn.classList.remove('active');
+
                 this._saveState();
             }
         });
@@ -691,6 +889,9 @@ class InstagramMockupApp {
                 if (this.dom.captionInput) this.dom.captionInput.value = this.state.caption;
                 if (this.dom.likesInput) this.dom.likesInput.value = this.state.likes;
                 if (this.dom.timestampInput) this.dom.timestampInput.value = this.state.timestamp;
+                if (this.dom.followingInput) this.dom.followingInput.value = this.state.following;
+                if (this.dom.bioInput) this.dom.bioInput.value = this.state.bio;
+                if (this.dom.storyRingColorInput) this.dom.storyRingColorInput.value = this.state.storyRingColor || '#dbdbdb';
                 
                 if (this.dom.verifiedInput) this.dom.verifiedInput.checked = this.state.verified;
                 if (this.dom.verifiedCaptionInput) this.dom.verifiedCaptionInput.checked = this.state.verifiedCaption;
