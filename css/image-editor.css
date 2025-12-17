@@ -1,0 +1,372 @@
+/* ==================== APP-SPECIFIC STYLES ==================== */
+.app-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+}
+
+.editor-layout {
+    display: grid;
+    grid-template-columns: 350px 1fr; /* Fixed sidebar, flexible canvas area */
+    gap: var(--spacing-lg);
+    align-items: start;
+}
+
+.main-controls {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.app-title-header {
+    text-align: center;
+    color: var(--text-primary);
+    font-size: var(--font-size-3xl);
+    font-weight: 800;
+    margin-bottom: var(--spacing-xs);
+}
+
+.app-subtitle-header {
+    text-align: center;
+    font-size: var(--font-size-lg);
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-lg);
+}
+
+.header-meta {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+.tool-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.meme-editor-layout {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: var(--spacing-lg);
+    align-items: start;
+}
+.tool-tab-btn {
+    padding: 12px 24px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tool-tab-btn:hover {
+    color: var(--accent-color);
+    background: var(--bg-tertiary);
+}
+
+.tool-tab-btn.active {
+    color: var(--accent-color);
+    border-bottom-color: var(--accent-color);
+}
+
+.tool-container {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden; /* Ensures child panels don't break the border radius */
+}
+
+.tool-panel {
+    display: none;
+}
+
+.tool-panel.active {
+    display: block;
+}
+
+.controls, .tool-controls-panel {
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.upload-panel {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.controls h2, .tool-controls-panel h3 {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    text-align: left;
+    margin-bottom: 0;
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.controls input, .controls select, .upload-panel input {
+    width: 100%;
+    padding: 10px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    box-sizing: border-box;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    font-size: 1rem;
+}
+
+.controls button {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 12px;
+    font-weight: bold;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.2s;
+}
+
+/* Style for color inputs */
+.controls input[type="color"] {
+    padding: 2px;
+    height: 40px;
+}
+
+.slider {
+    flex-grow: 1;
+}
+.slider-value {
+    width: 70px !important;
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.control-group label {
+    flex-basis: 100px;
+}
+
+.action-buttons-group {
+    display: flex;
+    gap: 10px;
+    margin-top: var(--spacing-sm);
+}
+
+.action-btn.secondary-action {
+    flex-grow: 1;
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.action-btn.secondary-action:hover:not(:disabled) {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+}
+
+/* --- Watermark Section --- */
+.watermark-type-selector {
+    display: flex;
+    gap: var(--spacing-md);
+    background: var(--bg-tertiary);
+    padding: var(--spacing-xs);
+    border-radius: var(--radius-sm);
+}
+.watermark-type-selector input[type="radio"] {
+    display: none; /* Hide the default radio button */
+}
+
+.watermark-type-selector label {
+    flex-grow: 1;
+    text-align: center;
+    padding: 8px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+/* --- New Upload Section Styles --- */
+.upload-options {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    flex-shrink: 0; /* Prevent button from shrinking */
+}
+
+.upload-btn:hover {
+    background: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
+
+.small-upload-btn {
+    padding: 8px 12px;
+    width: 100%;
+}
+
+.file-name-display {
+    flex-grow: 1;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background: var(--bg-primary);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+}
+
+.url-input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.url-input-group svg {
+    position: absolute;
+    left: 12px;
+    color: var(--text-secondary);
+}
+
+.url-input-group input {
+    padding-left: 40px; /* Make space for the icon */
+}
+
+.upload-hint {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-top: -5px;
+}
+.canvas-container {
+    padding: 10px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    /* Allow canvas container to grow and shrink */    
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0; /* Allows the container to shrink below its content's intrinsic size */
+    min-height: 300px; /* Set a minimum height to prevent collapse */
+}
+.canvas-wrapper {
+    position: relative; /* Needed for positioning the clear button */
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#memeCanvas {
+    border: 2px dashed var(--border-color);
+    cursor: grab;
+    display: block;
+    /* Make canvas responsive within its container */
+    max-width: 100%; 
+    max-height: 70vh; /* Set a max-height to prevent huge vertical overflow */
+    height: auto;
+    width: auto;
+    object-fit: contain;
+}
+.clear-image-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    font-size: 24px;
+    line-height: 32px;
+    text-align: center;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease, background 0.2s ease;
+    display: none; /* Hidden by default, shown via JS */
+}
+.clear-image-btn:hover {
+    background: var(--danger-color);
+    opacity: 1;
+}
+.tool-controls-panel {
+    max-width: 350px;
+    margin: 0 auto;
+    background: var(--bg-secondary);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+/* Responsive adjustments for the new layout */
+@media (max-width: 1024px) {
+    .editor-layout {
+        grid-template-columns: 1fr; /* Stack controls on top of canvas */
+    }
+
+    .main-controls, .canvas-container {
+        max-width: 700px; /* Limit width on tablet/mobile for better readability */
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+/* Responsive adjustments for the new layout */
+@media (max-width: 1024px) {
+    .editor-layout {
+        grid-template-columns: 1fr; /* Stack controls on top of canvas */
+    }
+
+    .main-controls, .canvas-container {
+        max-width: 700px; /* Limit width on tablet/mobile for better readability */
+        margin-left: auto;
+        margin-right: auto;
+    }
+}

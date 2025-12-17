@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Mockup Generator | Wolf Projects</title>
+    <link rel="icon" href="../assets/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/instagram-mockup.css">
+    <!-- SweetAlert2 for alerts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- html2canvas for downloading the mockup -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- SortableJS for drag and drop layers -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <script src="../js/main.js" defer></script>
+    <script src="../js/instagram-mockup.js" defer></script>
+</head>
+<body>
+    <nav class="navbar">
+      <div class="nav-container">
+        <a href="../index.html" class="nav-brand-link">
+          <div class="nav-brand">Wolf</div>
+        </a>
+
+        <button
+          class="nav-toggle"
+          id="nav-toggle"
+          aria-label="Open navigation menu"
+          aria-controls="nav-links"
+          aria-expanded="false"
+        >
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+
+        <div class="nav-links" id="nav-links" data-visible="false">
+          <a href="../index.html#apps" class="nav-link">Apps</a>
+          <a href="../index.html#about" class="nav-link">About</a>
+          <a href="../contact.html" class="nav-link">Contact</a>
+          <a
+            href="https://github.com/thejeXD"
+            target="_blank"
+            class="nav-link"
+            aria-label="GitHub Profile"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+            </svg>
+            <span class="nav-link-text">GitHub</span>
+          </a>
+          <button class="theme-toggle" id="theme-toggle" aria-label="Toggle color theme">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" id="theme-icon" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container app-container">
+        <header class="app-header">
+            <h1 class="app-title-header">Instagram Mockup Generator</h1>
+            <div class="header-meta">
+                <p class="app-subtitle-header">Create realistic Instagram post mockups for your social media planning.</p>
+                <span class="status-badge status-wip">WORK IN PROGRESS</span>
+                <span class="last-updated">Last Updated: Oct 2024</span>
+            </div>
+        </header>
+
+        <div class="mockup-workspace">
+            <!-- Controls Section -->
+            <div class="controls-panel">
+                <div class="control-group">
+                    <h3>Post Details</h3>
+                    
+                    <div class="input-group">
+                        <label>Username</label>
+                        <input type="text" id="input-username" value="wolf_designs" placeholder="username">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Location (Optional)</label>
+                        <input type="text" id="input-location" placeholder="Add location">
+                    </div>
+
+                    <div class="input-group">
+                        <div class="label-row">
+                            <label>Caption</label>
+                            <span id="caption-char-count" class="char-count">0 / 2200</span>
+                        </div>
+                        <textarea id="input-caption" rows="3" placeholder="Write a caption...">Creating something amazing! 🐺 #design #mockup</textarea>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>Stats & Settings</h3>
+                    
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Likes Count</label>
+                            <input type="text" id="input-likes" value="1,234">
+                        </div>
+                        <div class="input-group">
+                            <label>Timestamp</label>
+                            <input type="text" id="input-timestamp" value="2 HOURS AGO">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Following Count (Profile)</label>
+                        <input type="text" id="input-following" value="15">
+                    </div>
+                    <div class="input-group">
+                        <label>Bio (Profile)</label>
+                        <textarea id="input-bio" rows="3">Digital Creator 🎨&#10;Creating awesome tools for you.&#10;wolfprojects.netlify.app</textarea>
+                    </div>
+                    <div class="input-group">
+                        <label>Story Ring Color</label>
+                        <input type="color" id="input-story-ring-color" value="#dbdbdb" style="height: 40px; padding: 2px; cursor: pointer;">
+                    </div>
+
+                    <div class="toggles-row">
+                        <label class="toggle-label">
+                            <input type="checkbox" id="input-verified" checked>
+                            <span class="toggle-text">Verified Badge</span>
+                            <div class="info-tooltip-wrapper">
+                                <span class="info-icon">?</span>
+                                <span class="tooltip-content">Adds a blue verified checkmark next to the username in the header.</span>
+                            </div>
+                        </label>
+                        <label class="toggle-label">
+                            <input type="checkbox" id="input-verified-caption">
+                            <span class="toggle-text">Verified Caption</span>
+                            <div class="info-tooltip-wrapper">
+                                <span class="info-icon">?</span>
+                                <span class="tooltip-content">Adds a blue verified checkmark next to the username in the caption area.</span>
+                            </div>
+                        </label>
+                        <label class="toggle-label">
+                            <input type="checkbox" id="input-darkmode">
+                            <span class="toggle-text">Dark Mode</span>
+                        </label>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Post Format</label>
+                        <select id="input-format">
+                            <option value="square">Square (1:1)</option>
+                            <option value="portrait">Portrait (4:5)</option>
+                            <option value="landscape">Landscape (1.91:1)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>Images</h3>
+                    <div class="file-inputs">
+                        <div class="file-input-wrapper">
+                            <label for="upload-profile" class="btn-secondary">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                Upload Profile
+                            </label>
+                            <input type="file" id="upload-profile" accept="image/*" hidden>
+                        </div>
+                        <div class="file-input-wrapper">
+                            <label for="upload-post" class="btn-secondary">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                Upload Posts
+                            </label>
+                            <input type="file" id="upload-post" accept="image/*" hidden multiple>
+                        </div>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button id="btn-save-draft" class="btn-secondary full-width">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                        Save Draft
+                    </button>
+                    <button id="btn-final-preview" class="btn-secondary full-width">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        Final Preview
+                    </button>
+                    <button id="btn-download" class="btn-primary full-width">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Download Mockup
+                    </button>
+                </div>
+            </div>
+
+            <!-- Preview Section -->
+            <div class="preview-panel">
+                <div id="preview-card" class="ig-card">
+                    <!-- Header -->
+                    <div class="ig-header">
+                        <div class="ig-profile-info">
+                            <img src="../assets/logo.png" id="preview-profile-pic" alt="Profile" class="ig-avatar">
+                            <div class="ig-user-text">
+                                <div class="ig-username-row">
+                                    <span class="preview-username">wolf_designs</span>
+                                    <svg id="preview-verified" class="ig-verified-badge" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M20 0C31.0457 0 40 8.9543 40 20C40 31.0457 31.0457 40 20 40C8.9543 40 0 31.0457 0 20C0 8.9543 8.9543 0 20 0ZM16.3636 29.0909L30.9091 14.5455L28 11.6364L16.3636 23.2727L12 18.9091L9.09091 21.8182L16.3636 29.0909Z" fill="#3897F0"/></svg>
+                                </div>
+                                <div id="preview-location" class="ig-location"></div>
+                            </div>
+                        </div>
+                        <div class="ig-more-options">
+                            <svg aria-label="More options" fill="currentColor" height="24" viewBox="0 0 24 24" width="24"><circle cx="12" cy="12" r="1.5"></circle><circle cx="6" cy="12" r="1.5"></circle><circle cx="18" cy="12" r="1.5"></circle></svg>
+                        </div>
+                    </div>
+
+                    <!-- Image -->
+                    <div id="carousel-container" class="carousel-container">
+                        <button id="carousel-prev" class="carousel-button" aria-label="Go Back">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"></path></svg>
+                        </button>
+                        
+                        <div id="preview-image-container" class="ig-image-container">
+                            <img src="../assets/thumb-instagram.png" id="preview-post-image" alt="Post Content">
+                        </div>
+
+                        <button id="carousel-next" class="carousel-button" aria-label="Next">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg>
+                        </button>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="ig-actions">
+                        <div class="ig-action-left">
+                            <svg aria-label="Like" fill="currentColor" height="24" viewBox="0 0 24 24" width="24"><path d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.956-5.197 7.222-2.512 2.243-3.865 3.469-4.303 3.752-.477-.309-2.143-1.823-4.303-3.752C5.141 14.072 2.5 12.167 2.5 9.122a4.989 4.989 0 0 1 4.708-5.218 4.21 4.21 0 0 1 3.675 1.941c.84 1.175.98 1.763 1.12 1.763s.278-.588 1.11-1.766a4.17 4.17 0 0 1 3.679-1.938m0-2a6.04 6.04 0 0 0-4.797 2.127 6.052 6.052 0 0 0-4.787-2.127A6.985 6.985 0 0 0 .5 9.122c0 3.61 2.55 5.827 5.015 7.97.283.246.569.494.853.747l1.027.918a44.998 44.998 0 0 0 3.518 3.018 2 2 0 0 0 2.174 0 45.263 45.263 0 0 0 3.626-3.115l.922-.824c.293-.26.59-.519.885-.774 2.334-2.025 4.98-4.32 4.98-7.94a6.985 6.985 0 0 0-6.708-7.218Z"></path></svg>
+                            <svg aria-label="Comment" fill="currentColor" height="24" viewBox="0 0 24 24" width="24"><path d="M20.656 17.008a9.993 9.993 0 1 0-3.59 3.615L22 22Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2"></path></svg>
+                            <svg aria-label="Share Post" fill="currentColor" height="24" viewBox="0 0 24 24" width="24"><line fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2" x1="22" x2="9.218" y1="2" y2="10.083"></line><polygon fill="none" points="11.698 20.334 22 3.001 2 3.001 9.218 10.084 11.698 20.334" stroke="currentColor" stroke-linejoin="round" stroke-width="2"></polygon></svg>
+                        </div>
+                        <div class="ig-action-right">
+                            <svg aria-label="Save" fill="currentColor" height="24" viewBox="0 0 24 24" width="24"><polygon fill="none" points="20 21 12 13.44 4 21 4 3 20 3 20 21" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polygon></svg>
+                        </div>
+                    </div>
+
+                    <!-- Footer Info -->
+                    <div class="ig-footer">
+                        <div class="ig-likes" id="preview-likes">1,234 likes</div>
+                        <div class="ig-caption" id="preview-caption">
+                            <span class="ig-caption-user">wolf_designs</span> Creating something amazing! 🐺 #design #mockup
+                        </div>
+                        <div class="ig-timestamp" id="preview-timestamp">2 HOURS AGO</div>
+                    </div>
+                </div>
+
+                <div class="side-panels">
+                   <div class="layers-panel">
+                        <div class="layers-header">
+                            <h3>Image Layers</h3>
+                            <button id="btn-clear-layers" class="layer-clear-btn" style="display: none;" title="Move all images to Recently Deleted">Clear All</button>
+                        </div>
+                        <div id="layers-list" class="layers-list"></div>
+                        <p class="layer-hint">Drag to reorder images</p>
+
+                        <button id="toggle-deleted-btn" class="toggle-deleted-btn" title="Recently Deleted">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            <span>Recently Deleted</span>
+                            <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        <div id="recently-deleted-panel" class="recently-deleted-panel">
+                            <div class="layers-header">
+                                <h3>Recently Deleted</h3>
+                                <button id="btn-clear-deleted-permanently" class="layer-clear-btn" title="Permanently delete all images">Clear All</button>
+                            </div>
+                            <div id="recently-deleted-container" class="layers-list"></div>
+                        </div>
+                    </div>
+                    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay" style="display: none;">
+       <div class="spinner"></div>
+        <p>Processing images...</p>
+   </div>
+
+    <!-- Final Preview Modal -->
+    <div id="final-preview-modal" class="final-preview-modal">
+        <button id="close-preview-btn" class="close-preview-btn">&times;</button>
+        <div class="final-preview-content"></div>
+    </div>
+</body>
+</html>

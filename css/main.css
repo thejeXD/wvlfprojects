@@ -5,6 +5,10 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 :root {
     /* Light Theme Colors */
     --bg-primary: #ffffff;
@@ -14,8 +18,8 @@
     --text-secondary: #6c757d;
     --text-tertiary: #495057;
     --border-color: #dee2e6;
-    --accent-color: #2563eb;
-    --accent-hover: #1d4ed8;
+    --accent-color: #e74c3c;
+    --accent-hover: #c0392b;
     --success-color: #10b981;
     --warning-color: #f59e0b;
     --danger-color: #ef4444;
@@ -60,8 +64,8 @@ body.dark-theme {
     --text-secondary: #94a3b8;
     --text-tertiary: #cbd5e1;
     --border-color: #334155;
-    --accent-color: #3b82f6;
-    --accent-hover: #2563eb;
+    --accent-color: #e74c3c;
+    --accent-hover: #c0392b;
 }
 
 body {
@@ -226,9 +230,9 @@ body.dark-theme .navbar {
 }
 
 .cta-button:hover {
-    background: var(--accent-hover);
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-lg);
+    background: linear-gradient(45deg, var(--accent-hover) 0%, var(--accent-color) 100%);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 10px 20px rgba(231, 76, 60, 0.4);
 }
 
 /* ==================== APPS SECTION ==================== */
@@ -455,6 +459,31 @@ body.dark-theme .navbar {
 }
 .app-card-link:hover .tag-number {
     background: rgba(174, 129, 255, 0.2);
+    border-color: var(--tag-color);
+    color: var(--tag-color);
+}
+
+/* 6. New/Red Tags */
+.tag-new {
+    --tag-color: #ff4757;
+    color: var(--tag-color);
+    background: rgba(255, 71, 87, 0.1);
+    animation: pulseRed 2s infinite;
+}
+
+@keyframes pulseRed {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(255, 71, 87, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 71, 87, 0);
+    }
+}
+.app-card-link:hover .tag-new {
+    background: rgba(255, 71, 87, 0.2);
     border-color: var(--tag-color);
     color: var(--tag-color);
 }
@@ -1224,4 +1253,44 @@ body.dark-theme .track-image {
 
 body.dark-theme .swal2-popup {
     background: var(--bg-secondary) !important;
+}
+
+/* ==================== STATUS BADGES ==================== */
+.status-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px; /* Pill shape */
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1;
+    border: 1px solid transparent;
+}
+
+/* --- Released Status (Green) --- */
+.status-badge.status-released {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--success-color);
+    border-color: rgba(16, 185, 129, 0.2);
+}
+
+/* --- Work-In-Progress Status (Yellow) --- */
+.status-badge.status-wip {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: var(--warning-color);
+    border-color: rgba(245, 158, 11, 0.2);
+}
+
+/* --- Testing Status (Blue) --- */
+.status-badge.status-testing {
+    background-color: rgba(59, 130, 246, 0.1);
+    color: #3b82f6; /* Using a specific blue as there's no variable */
+    border-color: rgba(59, 130, 246, 0.2);
+}
+
+.last-updated {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    opacity: 0.8;
 }
