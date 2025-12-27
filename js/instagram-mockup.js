@@ -394,21 +394,79 @@ class InstagramMockupApp {
         if (this.dom.loadingOverlay) this.dom.loadingOverlay.style.display = 'none';
     }
 
+    async _processImageFile(file) {
+        const isHeic = /\.(heic|heif)$/i.test(file.name) || 
+                       file.type === 'image/heic' || 
+                       file.type === 'image/heif';
+
+        if (isHeic) {
+            if (typeof heic2any !== 'undefined') {
+                try {
+                    const blob = await heic2any({
+                        blob: file,
+                        toType: 'image/jpeg',
+                        quality: 0.8
+                    });
+                    const conversionBlob = Array.isArray(blob) ? blob[0] : blob;
+                    
+                    return new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => resolve({
+                            src: e.target.result,
+                            name: file.name.replace(/\.(heic|heif)$/i, '.jpg'),
+                            size: this._formatFileSize(conversionBlob.size)
+                        });
+                        reader.readAsDataURL(conversionBlob);
+                    });
+                } catch (e) {
+                    console.error('HEIC conversion failed', e);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Conversion Failed',
+                        text: 'Could not convert HEIC image.',
+                        confirmButtonColor: '#ef4444'
+                    });
+                    return null;
+                }
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'HEIC Not Supported',
+                    text: 'Please include the "heic2any" library to support .HEIC files.',
+                    confirmButtonColor: '#2563eb'
+                });
+                return null;
+            }
+        }
+
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve({
+                src: e.target.result,
+                name: file.name,
+                size: this._formatFileSize(file.size)
+            });
+            reader.readAsDataURL(file);
+        });
+    }
+
     _handleDrop(e) {
         this.dom.previewCard.classList.remove('drag-over');
-        const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+        const files = Array.from(e.dataTransfer.files).filter(file => 
+            file.type.startsWith('image/') || /\.(heic|heif)$/i.test(file.name)
+        );
         
         if (files.length === 0) return;
 
         if (e.target.id === 'preview-profile-pic') {
             const file = files[0];
-            const reader = new FileReader();
-            reader.onload = (evt) => {
-                this.state.profileImage = evt.target.result;
-                this._updatePreview();
-                this._saveState();
-            };
-            reader.readAsDataURL(file);
+            this._processImageFile(file).then(imgData => {
+                if (imgData) {
+                    this.state.profileImage = imgData.src;
+                    this._updatePreview();
+                    this._saveState();
+                }
+            });
         } else {
             this._processPostImages(files);
         }
@@ -441,20 +499,11 @@ class InstagramMockupApp {
 
         this._showLoading();
         
-        const promises = files.map(file => {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = (e) => resolve({
-                    src: e.target.result,
-                    name: file.name,
-                    size: this._formatFileSize(file.size)
-                });
-                reader.readAsDataURL(file);
-            });
-        });
+        const promises = files.map(file => this._processImageFile(file));
 
         Promise.all(promises).then(newImages => {
-            this.state.postImages = this.state.postImages.concat(newImages);
+            const validImages = newImages.filter(img => img !== null);
+            this.state.postImages = this.state.postImages.concat(validImages);
             if (this.currentImageIndex >= this.state.postImages.length) {
                 this.currentImageIndex = 0;
             }
@@ -477,13 +526,13 @@ class InstagramMockupApp {
             // Single image (Profile)
             const file = files[0];
             if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.state[stateKey] = e.target.result;
-                    this._updatePreview();
-                    this._saveState();
-                };
-                reader.readAsDataURL(file);
+                this._processImageFile(file).then(imgData => {
+                    if (imgData) {
+                        this.state[stateKey] = imgData.src;
+                        this._updatePreview();
+                        this._saveState();
+                    }
+                });
             }
         }
     }
