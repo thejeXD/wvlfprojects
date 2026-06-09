@@ -1,105 +1,73 @@
-// Theme Toggle
-let currentTheme = localStorage.getItem("theme") || "light";
+/**
+ * Main Utility Module
+ * Handles theme toggling, global alerts, and smooth scrolling.
+ */
 
-function toggleTheme() {
-    currentTheme = currentTheme === "light" ? "dark" : "light";
-    applyTheme();
-    localStorage.setItem("theme", currentTheme);
-}
+// Theme is permanently enforced via CSS.
 
-function applyTheme() {
-    const body = document.body;
-    const themeIcon = document.getElementById("theme-icon");
-
-    // CRITICAL FIX: Only try to set innerHTML if the themeIcon element exists on the current page
-    if (themeIcon) {
-        if (currentTheme === "dark") {
-            body.classList.add("dark-theme");
-            themeIcon.innerHTML = `
-                <circle cx="12" cy="12" r="5"/>
-                <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-width="2"/>
-                <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-width="2"/>
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2"/>
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="2"/>
-                <line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-width="2"/>
-                <line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="2"/>
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2"/>
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2"/>
-            `;
-        } else {
-            body.classList.remove("dark-theme");
-            themeIcon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
-        }
-    } else {
-        // Still apply the dark-theme class to the body even if the icon isn't there, 
-        // to ensure CSS colors/backgrounds work across all pages.
-        if (currentTheme === "dark") {
-            body.classList.add("dark-theme");
-        } else {
-            body.classList.remove("dark-theme");
-        }
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    const themeToggleButton = document.getElementById('theme-toggle');
-    if (themeToggleButton) {
-        themeToggleButton.addEventListener('click', toggleTheme);
-    }
-});
-// Show app info with SweetAlert
-function showAppInfo(appName) {
-    if (appName === "grade-calculator") {
-        Swal.fire({
+// --- App Alerts ---
+export function showAppInfo(appName) {
+    const appDetails = {
+        'grade-calculator': {
             title: "Grade Calculator",
-            html: `
-                <div style="text-align: left;">
-                    <p><strong>Features:</strong></p>
-                    <ul style="margin: 10px 0;">
-                        <li>Calculate GWA across multiple subjects</li>
-                        <li>Predict required grades to pass</li>
-                        <li>Customizable weight distribution</li>
-                        <li>Dark/Light theme support</li>
-                        <li>Export grades as PDF</li>
-                    </ul>
-                    <p style="margin-top: 15px;"><strong>Perfect for:</strong> Students tracking academic performance</p>
-                </div>
-            `,
-            icon: "info",
-            confirmButtonText: "Got it!",
-            confirmButtonColor: "#2563eb",
-        });
-    } else if (appName === 'aguinaldo-randomizer') {
-        Swal.fire({
-            title: 'Randomizer Aguinaldo',
-            html: `
-                <div style="text-align: left;">
-                    <p><strong>Features:</strong></p>
-                    <ul style="margin: 10px 0;">
-                        <li>Input Minimum and Maximum cash amounts.</li>
-                        <li>Set a custom **Probability** (chance) to generate an amount in the **Top 30%** of the range.</li>
-                        <li>Designed for fun and fair holiday gift-giving!</li>
-                    </ul>
-                    <p style="margin-top: 15px;"><strong>Perfect for:</strong> Deciding Christmas cash gifts in a fun, probabilistic way.</p>
-                </div>
-            `,
-            icon: 'info',
-            confirmButtonText: 'Got it!',
-            confirmButtonColor: '#2563eb'
-        });
-    } else if (appName === 'follower-checkers') {
-        Swal.fire({
+            features: [
+                "Calculate GWA across multiple subjects",
+                "Predict required grades to pass",
+                "Customizable weight distribution",
+                "Export grades as PDF"
+            ],
+            perfectFor: "Students tracking academic performance"
+        },
+        'aguinaldo-randomizer': {
+            title: "Randomizer Aguinaldo",
+            features: [
+                "Input Minimum and Maximum cash amounts.",
+                "Set a custom Probability for top 30% of range.",
+                "Designed for fun and fair holiday gift-giving!"
+            ],
+            perfectFor: "Deciding Christmas cash gifts in a fun way."
+        },
+        'follower-checkers': {
             title: 'Follower Checkers',
             text: 'This app is a utility for checking social media follower status. Details coming soon!',
+            features: [],
+            perfectFor: ""
+        }
+    };
+
+    const details = appDetails[appName];
+    if (!details) return;
+
+    if (details.text) {
+        Swal.fire({
+            title: details.title,
+            text: details.text,
             icon: 'info',
             confirmButtonText: 'Okay',
             confirmButtonColor: '#2563eb'
         });
+        return;
     }
+
+    const featureList = details.features.map(f => `<li>${f}</li>`).join('');
+    Swal.fire({
+        title: details.title,
+        html: `
+            <div style="text-align: left;">
+                <p><strong>Features:</strong></p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    ${featureList}
+                </ul>
+                <p style="margin-top: 15px;"><strong>Perfect for:</strong> ${details.perfectFor}</p>
+            </div>
+        `,
+        icon: "info",
+        confirmButtonText: "Got it!",
+        confirmButtonColor: "#2563eb",
+    });
 }
 
-// Coming soon alert
-function comingSoonAlert() {
+export function comingSoonAlert() {
   Swal.fire({
     title: "Get Notified!",
     text: "Enter your email below to be notified when this app is released.",
@@ -111,17 +79,15 @@ function comingSoonAlert() {
     cancelButtonText: "Cancel",
     showLoaderOnConfirm: true,
     preConfirm: (email) => {
-      // Here you would typically send the email to your backend or a mailing list service.
-      // For this example, we'll just simulate a network request.
       return new Promise((resolve) => {
         setTimeout(() => {
-          if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          if (email && /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
             resolve();
           } else {
             Swal.showValidationMessage("Please enter a valid email address");
             resolve();
           }
-        }, 1000); // Simulate a 1-second delay
+        }, 800);
       });
     },
     allowOutsideClick: () => !Swal.isLoading(),
@@ -137,14 +103,22 @@ function comingSoonAlert() {
   });
 }
 
-// Smooth scroll
-document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener("click", function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute("href"));
-        if (target) {
-            target.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
+// Attach to window to support inline onclick handlers
+window.showAppInfo = showAppInfo;
+window.comingSoonAlert = comingSoonAlert;
+
+// --- Initialization ---
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute("href"));
+            if (target) {
+                target.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+        });
     });
 });
 
@@ -256,22 +230,24 @@ if (modal) {
     const modalDescription = document.getElementById("modal-description");
     const modalButton = document.getElementById("modal-button");
     const modalDetails = document.getElementById("modal-details");
-    const closeBtn = document.getElementsByClassName("close-btn")[0]; // Close button should exist if modal exists
+    const closeBtn = document.getElementsByClassName("close-btn")[0];
+    
+    // Gallery Elements
+    const prevBtn = document.querySelector('.modal-prev');
+    const nextBtn = document.querySelector('.modal-next');
+    const dotsContainer = document.getElementById('modal-dots');
+    
+    let currentGalleryImages = [];
+    let currentGalleryIndex = 0;
 
     // Function to close the modal
     function closeModal() {
-        // 1. Remove the 'open' class for fade-out
         modal.classList.remove("open");
-
-        // 2. Hide display after transition completes (0.3s)
         setTimeout(() => {
-             // Use display: none only after the fade-out is complete
             modal.style.display = "none";
-        }, 300); // 300ms matches the CSS transition time
+        }, 300);
     }
 
-    // Attach close events
-    // We check if closeBtn exists just in case, though it should be present in the HTML if modal is present
     if (closeBtn) {
          closeBtn.onclick = closeModal;
     }
@@ -281,22 +257,74 @@ if (modal) {
             closeModal();
         }
     }
+    
+    function updateGalleryUI() {
+        if (currentGalleryImages.length === 0) return;
+        
+        // Update image source
+        modalImage.src = currentGalleryImages[currentGalleryIndex];
+        
+        // Show/Hide arrows based on image count
+        if (currentGalleryImages.length > 1) {
+            prevBtn.style.display = 'flex';
+            nextBtn.style.display = 'flex';
+        } else {
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+        }
+        
+        // Update dots
+        if (dotsContainer) {
+            dotsContainer.innerHTML = '';
+            if (currentGalleryImages.length > 1) {
+                currentGalleryImages.forEach((_, idx) => {
+                    const dot = document.createElement('div');
+                    dot.classList.add('modal-dot');
+                    if (idx === currentGalleryIndex) dot.classList.add('active');
+                    dot.addEventListener('click', () => {
+                        currentGalleryIndex = idx;
+                        updateGalleryUI();
+                    });
+                    dotsContainer.appendChild(dot);
+                });
+            }
+        }
+    }
+    
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            currentGalleryIndex = (currentGalleryIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
+            updateGalleryUI();
+        });
+    }
+    
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            currentGalleryIndex = (currentGalleryIndex + 1) % currentGalleryImages.length;
+            updateGalleryUI();
+        });
+    }
 
     function showGameDetails(imageElement) {
-        // 1. Get details from the data attributes
         const name = imageElement.dataset.name || "Game Preview";
         const description = imageElement.dataset.description;
         const link = imageElement.dataset.link;
-        const imageUrl = imageElement.src;
-
-        // 2. Set the image source
-        modalImage.src = imageUrl;
-        modalImage.alt = name;
         
-        // 3. Always show the name
+        // Parse images from data-images, fallback to src
+        const imagesRaw = imageElement.dataset.images;
+        if (imagesRaw && imagesRaw.trim().length > 0) {
+            currentGalleryImages = imagesRaw.split(',').map(s => s.trim());
+        } else {
+            currentGalleryImages = [imageElement.src];
+        }
+        currentGalleryIndex = 0;
+        
+        // Update Gallery
+        updateGalleryUI();
+        
+        modalImage.alt = name;
         modalName.textContent = name;
         
-        // 4. Handle Description
         if (description && description.trim().length > 0) {
             modalDescription.textContent = description;
             modalDescription.style.display = 'block';
@@ -304,7 +332,6 @@ if (modal) {
             modalDescription.style.display = 'none';
         }
         
-        // 5. Handle Button/Link
         if (link && link.trim().length > 0) {
             modalButton.href = link;
             modalButton.style.display = 'inline-block';
@@ -312,35 +339,26 @@ if (modal) {
             modalButton.style.display = 'none';
         }
 
-        // 6. Hide the whole details block if neither description nor link are present
         if ((!description || description.trim().length === 0) && (!link || link.trim().length === 0)) {
             modalDetails.style.display = 'none';
         } else {
             modalDetails.style.display = 'block';
         }
 
-        // 7. Show the modal:
-        // FIRST set display to FLEX (to center content)
         modal.style.display = 'flex';
-        // THEN add the 'open' class to trigger the opacity transition
         setTimeout(() => {
             modal.classList.add('open');
         }, 10);
     }
 
-
-    // Attach click listeners to all images in the track (REPLACE EXISTING)
     if (track) {
         const images = track.getElementsByClassName('track-image');
-        
         for (const image of images) {
             image.addEventListener('click', function(e) {
-                // Check if the user was just dragging (movement check remains for usability)
                 const currentPercentage = parseFloat(track.dataset.percentage) || 0;
                 const prevPercentage = parseFloat(track.dataset.prevPercentage) || 0;
                 const movement = Math.abs(currentPercentage - prevPercentage);
 
-                // If movement is small (e.g., less than 0.5%), treat it as a click
                 if (movement < 0.5) {
                     showGameDetails(e.currentTarget);
                 }
@@ -427,6 +445,4 @@ if (backToTopButton) {
     // No extra click handler is needed here.
 }
 
-
-// Apply theme on load
-window.addEventListener("DOMContentLoaded", applyTheme);
+

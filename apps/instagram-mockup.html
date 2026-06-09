@@ -8,16 +8,16 @@
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/instagram-mockup.css">
     <!-- SweetAlert2 for alerts -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- html2canvas for downloading the mockup -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <!-- SortableJS for drag and drop layers -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
-    <script src="../js/main.js" defer></script>
-    <script src="../js/instagram-mockup.js" defer></script>
+    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <script type="module" src="../js/main.js" defer></script>
+    <script type="module" src="../js/instagram-mockup.js" defer></script>
 </head>
 <body>
-    <nav class="navbar">
+        <nav class="navbar">
       <div class="nav-container">
         <a href="../index.html" class="nav-brand-link">
           <div class="nav-brand">Wolf</div>
@@ -36,7 +36,8 @@
         </button>
 
         <div class="nav-links" id="nav-links" data-visible="false">
-          <a href="../index.html#apps" class="nav-link">Apps</a>
+          <a href="../index.html#portfolio" class="nav-link">Portfolio</a>
+          <a href="../index.html#apps" class="nav-link">Utilities</a>
           <a href="../index.html#about" class="nav-link">About</a>
           <a href="../contact.html" class="nav-link">Contact</a>
           <a
@@ -50,11 +51,6 @@
             </svg>
             <span class="nav-link-text">GitHub</span>
           </a>
-          <button class="theme-toggle" id="theme-toggle" aria-label="Toggle color theme">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" id="theme-icon" aria-hidden="true">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-            </svg>
-          </button>
         </div>
       </div>
     </nav>
