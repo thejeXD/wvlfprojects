@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>
+      Aguinaldo Randomizer: Fun Probabilistic Cash Picker | Wolf's Apps
+    </title>
+    <link
+      rel="canonical"
+      href="https://wolfprojects.netlify.app/apps/randomizer-aguinaldo.html"
+    />
+
+    <meta
+      name="description"
+      content="A fun, probabilistic tool to randomly generate a Christmas 'Aguinaldo' (cash gift) amount based on custom minimum, maximum, and weighted probability settings."
+    />
+
+    <meta property="og:title" content="The Randomizer Aguinaldo Fun Utility" />
+    <meta
+      property="og:description"
+      content="Make holiday gift-giving fun and fair! Set a range and weighted probability for a random cash gift amount."
+    />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://wolfprojects.netlify.app/apps/randomizer-aguinaldo.html"
+    />
+    <meta property="og:image" content="/assets/thumb-randomizer-C5-_k5Jz.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Randomizer Aguinaldo - Holiday Cash Picker"
+    />
+    <meta
+      name="twitter:description"
+      content="A playful utility for deciding Christmas cash gifts with probability settings. Try it now!"
+    />
+
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon" /> 
+    <link rel="apple-touch-icon" href="assets/logo.png" /> 
+    <script type="module" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" crossorigin src="/assets/randomizer-CWG4_Kyf.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/main-B-S92MT7.js">
+    <link rel="stylesheet" crossorigin href="/assets/main-C2ilbWbA.css">
+    <link rel="stylesheet" crossorigin href="/assets/randomizer-DJ-ZmOWv.css">
+  </head>
+  <body>
+        <nav class="navbar">
+      <div class="nav-container">
+        <a href="../index.html" class="nav-brand-link">
+          <div class="nav-brand">Wolf</div>
+        </a>
+
+        <button
+          class="nav-toggle"
+          id="nav-toggle"
+          aria-label="Open navigation menu"
+          aria-controls="nav-links"
+          aria-expanded="false"
+        >
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+
+        <div class="nav-links" id="nav-links" data-visible="false">
+          <a href="../index.html#portfolio" class="nav-link">Portfolio</a>
+          <a href="../index.html#apps" class="nav-link">Utilities</a>
+          <a href="../index.html#about" class="nav-link">About</a>
+          <a href="../contact.html" class="nav-link">Contact</a>
+          <a
+            href="https://github.com/thejeXD"
+            target="_blank"
+            class="nav-link"
+            aria-label="GitHub Profile"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+            </svg>
+            <span class="nav-link-text">GitHub</span>
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="app-main">
+      <div class="container app-container">
+        <h1 class="app-title-header">💰 RANDOMIZER AGUINALDO</h1>
+        <p class="app-subtitle-header">
+          Randomly generate an "aguinaldo" amount with custom probability
+          settings.
+        </p>
+
+        <div class="input-card">
+          <h2 class="card-title">Set Parameters</h2>
+          <div class="input-group">
+            <label for="min-money">Minimum Amount (₱)</label>
+            <input
+              type="number"
+              id="min-money"
+              value="100"
+              min="0"
+              step="1"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label for="max-money">Maximum Amount (₱)</label>
+            <input
+              type="number"
+              id="max-money"
+              value="1000"
+              min="0"
+              step="1"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label for="probability">Probability of Higher Amount (%)</label>
+            <input
+              type="number"
+              id="probability"
+              value="10"
+              min="1"
+              max="100"
+              step="1"
+              required
+            />
+            <p class="input-helper">
+              e.g., 10% chance for a random amount in the top **30%** of the
+              range.
+            </p>
+          </div>
+
+          <button id="randomize-btn" class="btn-primary full-width">
+            Generate Aguinaldo!
+          </button>
+        </div>
+
+        <div id="result-card" class="result-card hidden">
+          <h2 class="card-title">Result</h2>
+          <p class="result-label">Generated Aguinaldo:</p>
+          <div class="result-amount-wrapper">
+            <p id="result-amount" class="result-amount">₱0.00</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <p>Created by Wolf with ❤️</p>
+        <p class="copyright">© 2025 All Rights Reserved</p>
+      </div>
+    </footer>
+
+    
+  </body>
+</html>

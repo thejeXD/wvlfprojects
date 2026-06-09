@@ -6,8 +6,13 @@
   "version": "1.0.0",
   "description": "A powerful, feature-rich grade calculator and predictor designed for students to track their academic performance across multiple subjects with ease.",
   "main": "js/main.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "vite": "^6.4.3"
+  },
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

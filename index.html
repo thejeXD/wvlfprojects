@@ -35,9 +35,14 @@
     <link rel="icon" href="assets/favicon.ico" type="image/x-icon" />
     <link rel="apple-touch-icon" href="assets/logo.png" />
 
+    <!-- Google Fonts: Inter and Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="css/main.css" />
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="js/main.js" defer></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="js/main.js" defer></script>
 
     <!-- Structured Data for SEO -->
     <script type="application/ld+json">
@@ -75,7 +80,8 @@
         </button>
 
         <div class="nav-links" id="nav-links" data-visible="false">
-          <a href="#apps" class="nav-link">Apps</a>
+          <a href="#portfolio" class="nav-link">Portfolio</a>
+          <a href="#apps" class="nav-link">Utilities</a>
           <a href="#about" class="nav-link">About</a>
           <a href="contact.html" class="nav-link">Contact</a>
           <a
@@ -89,343 +95,104 @@
             </svg>
             <span class="nav-link-text">GitHub</span>
           </a>
-          <button class="theme-toggle" id="theme-toggle" aria-label="Toggle color theme">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              id="theme-icon"
-              aria-hidden="true"
-            >
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-            </svg>
-          </button>
         </div>
       </div>
     </nav>
 
     <header class="hero">
       <div class="hero-content">
-        <h1 class="hero-title">Simple Apps & Creative Projects</h1>
+        <h1 class="hero-title">Engineering Digital Experiences.</h1>
         <p class="hero-subtitle">
-          Productivity tools for students and immersive Roblox game creations.
+          Specializing in immersive Roblox architecture and lightning-fast web utilities.
         </p>
-        <a href="#apps" class="cta-button">Explore Apps</a>
+        <a href="#portfolio" class="cta-button">View Work</a>
       </div>
     </header>
 
-    <section id="apps" class="apps-section fade-in-on-scroll">
+    <section id="portfolio" class="portfolio-section fade-in-on-scroll">
       <div class="container">
-        <h2 class="section-title">My Applications</h2>
-        <div class="apps-grid">
-          <a href="apps/grade-calculator.html" class="app-card-link">
-            <div class="app-card">
-              <img
-                src="assets/thumb-calculator.png"
-                alt="Grade Calculator Thumbnail"
-                class="app-thumbnail"
-              />
+        <h2 class="section-title">Roblox Game Creations</h2>
+        <p class="section-subtitle">A collection of immersive worlds and complex Lua systems.</p>
 
-              <div class="info-tag-container">
-                <div class="info-tag">i</div>
-                <div class="info-tooltip">
-                  A powerful tool to calculate GWA, predict required grades, and
-                  track academic performance across multiple subjects.
-                </div>
-              </div>
-
-              <h3 class="app-title">Grade Calculator</h3>
-              <p class="app-description">
-                Instantly analyze grades and predict required scores.
-              </p>
-
-              <div class="app-tags">
-                <span class="tag tag-keyword">Education</span>
-                <span class="tag tag-func">Calculator</span>
-              </div>
-            </div>
-          </a>
-
-          <a href="apps/randomizer-aguinaldo.html" class="app-card-link">
-            <div class="app-card">
-              <img
-                src="assets/thumb-randomizer.png"
-                alt="Randomizer Thumbnail"
-                class="app-thumbnail"
-              />
-
-              <div class="info-tag-container">
-                <div class="info-tag">i</div>
-                <div class="info-tooltip">
-                  Randomly generate a Christmas "aguinaldo" cash gift amount
-                  with custom minimum, maximum, and a weighted probability
-                  setting.
-                </div>
-              </div>
-
-              <h3 class="app-title">Randomizer Aguinaldo</h3>
-              <p class="app-description">
-                A fun, probabilistic tool for holiday gift-giving.
-              </p>
-
-              <div class="app-tags">
-                <span class="tag tag-var">Fun</span>
-                <span class="tag tag-string">Utility</span>
-                <span class="tag tag-number">Finance</span>
-              </div>
-            </div>
-          </a>
-
-          <a href="apps/followers-checker.html" class="app-card-link">
-            <div class="app-card">
-              <img
-                src="assets/thumb-instagram.png"
-                alt="Follower Checker Thumbnail"
-                class="app-thumbnail"
-              />
-
-              <div class="info-tag-container">
-                <div class="info-tag">i</div>
-                <div class="info-tooltip">
-                  Utility for checking who follows or unfollows you on
-                  Instagram. (Note: External API required)
-                </div>
-              </div>
-
-              <h3 class="app-title">Follower Checkers</h3>
-              <p class="app-description">
-                Track Instagram followers with ease and simplicity.
-              </p>
-
-              <div class="app-tags">
-                <span class="tag tag-var">Instagram</span>
-                <span class="tag tag-string">Utility</span>
-              </div>
-            </div>
-          </a>
-
-          <a href="apps/date-predictor.html" class="app-card-link">
-            <div class="app-card">
-              <img
-                src="assets/thumb-predictor.png"
-                alt="Date Predictor Thumbnail"
-                class="app-thumbnail"
-              />
-
-              <div class="info-tag-container">
-                <div class="info-tag">i</div>
-                <div class="info-tooltip">
-                  A fun time-travel utility that calculates future or past dates
-                  based on custom periods. Features a cool "hacking" console
-                  output.
-                </div>
-              </div>
-
-              <h3 class="app-title">Date Predictor</h3>
-              <p class="app-description">
-                Predict dates into the past or future with a console execution
-                aesthetic.
-              </p>
-
-              <div class="app-tags">
-                <span class="tag tag-keyword">Utility</span>
-                <span class="tag tag-func">Fun</span>
-                <span class="tag tag-var">Time</span>
-              </div>
-            </div>
-          </a>
-
-          <a href="apps/image-editor.html" class="app-card-link">
-            <div class="app-card">
-              <img
-                src="assets/thumb-image-editor.png"
-                alt="Image Toolbox Thumbnail"
-                class="app-thumbnail"
-              />
-
-              <div class="info-tag-container">
-                <div class="info-tag">i</div>
-                <div class="info-tooltip">
-                  A multi-tool for images. Create memes, adjust colors, and more. Supports file uploads, drag & drop, and pasting from clipboard.
-                </div>
-              </div>
-
-              <h3 class="app-title">Image Toolbox</h3>
-              <p class="app-description">
-                A versatile editor for memes, adjustments, and more.
-              </p>
-
-              <div class="app-tags">
-                <span class="tag tag-var">Creative</span>
-                <span class="tag tag-string">Utility</span>
-              </div>
-            </div>
-          </a>
-
-          <a href="apps/instagram-mockup.html" class="app-card-link">
-            <div class="app-card">
-              <img
-                src="assets/thumb-mockup.png"
-                alt="Instagram Mockup Thumbnail"
-                class="app-thumbnail"
-              />
-
-              <div class="info-tag-container">
-                <div class="info-tag">i</div>
-                <div class="info-tooltip">
-                  Create realistic Instagram post mockups with verified badges, dark mode, and custom aspect ratios.
-                </div>
-              </div>
-
-              <h3 class="app-title">Instagram Mockup</h3>
-              <p class="app-description">
-                Generate and download Instagram post previews.
-              </p>
-
-              <div class="app-tags">
-                <span class="tag tag-new">NEW</span>
-                <span class="tag tag-var">Social</span>
-                <span class="tag tag-string">Design</span>
-              </div>
-            </div>
-          </a>
-
-          <div class="app-card coming-soon">
-            <div class="app-icon">
-              <svg
-                width="48"
-                height="48"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path d="M6 2h12" />
-                <path d="M6 22h12" />
-                <path d="M6 2c0 5.5 12 5.5 12 11S6 16.5 6 22" />
-              </svg>
-            </div>
-            <h3 class="app-title">Coming Soon</h3>
-            <p class="app-description">
-              More exciting tools and applications are on the way. Stay tuned!
-            </p>
-            <div class="app-tags">
-              <span class="tag">TBA</span>
-            </div>
-            <div class="app-actions">
-              <button onclick="comingSoonAlert()" class="btn-secondary">
-                Notify Me
-              </button>
+        <div class="game-previews-section">
+          <div class="image-track-container">
+            <div id="image-track" class="image-track" data-mouse-down-at="0" data-prev-percentage="0">
+              <img class="track-image" src="assets/asset1.png" draggable="false" data-name="BGC Hangout" data-images="assets/asset1.png,assets/asset5.png" data-link="https://www.roblox.com/games/your-game-id-1" alt="Preview of Roblox game: BGC Hangout" />
+              <img class="track-image" src="assets/asset2.png" draggable="false" data-name="Boracay V1/V2" data-description="A challenging adventure/puzzle map focused on complex Lua scripting and environment interaction." data-images="assets/asset2.png,assets/asset1.png" data-link="https://www.roblox.com/games/your-game-id-2" alt="Preview of Roblox game: Boracay V1/V2" />
+              <img class="track-image" src="assets/asset5.png" draggable="false" data-name="Wolf Hub - Business" data-description="High-speed racing game with custom cars, leaderboards, and detailed track modeling." data-images="assets/asset5.png" data-link="https://www.roblox.com/games/your-game-id-3" alt="Preview of Roblox game: Wolf Hub" />
             </div>
           </div>
+          <p class="track-hint">Drag or swipe the images to explore my work.</p>
         </div>
       </div>
     </section>
 
     <section id="about" class="about-section fade-in-on-scroll">
       <div class="container">
-        <h2 class="section-title">About</h2>
-
+        <h2 class="section-title">About Me</h2>
         <div class="about-content">
           <p>
-            Hi! I'm <strong>Wolf</strong>, a student and aspiring developer who
-            builds tools to make life easier—especially student life! My passion
-            is transforming
-            <mark class="var">ideas into simple solutions</mark> using web
-            technologies (HTML, CSS, and JavaScript).
+            Hi! I'm <strong>Wolf</strong>, a student and developer passionate about transforming ideas into elegant digital solutions.
           </p>
           <p>
-            I'm still early in my coding journey, focusing on **practical, small
-            projects** that solve real problems, like the Grade Calculator. When
-            I'm not studying or building utility apps, I explore **game
-            development** on the Roblox platform, where I learn complex logic
-            and <mark class="keyword">architect immersive worlds</mark> using
-            Lua.
+            Whether it's architecting complex Lua systems for immersive Roblox experiences or building lightning-fast utility web applications using modern Javascript, my focus is always on writing clean code and delivering a seamless user experience.
           </p>
-          <p>
-            This site is a portfolio of my learning—a place for
-            <mark class="func">simple, effective tools</mark> and experiments. I
-            believe in <mark class="number">clean code</mark> and a
-            straightforward user experience. Let's learn and build together!
-          </p>
-
-          <div class="code-snippet-stack">
-            <div class="code-snippet" data-lang="Lua">
-              <span class="keyword">local</span>
-              <span class="variable">Wolf</span>
-              <span class="operator">=</span>
-              <span class="string">"Learning"</span>
-            </div>
-            <div class="code-snippet" data-lang="Python">
-              <span class="function">print</span>(<span class="string"
-                >"Solving problems..."</span
-              >)
-            </div>
-            <div class="code-snippet" data-lang="CSS">
-              <span class="selector">.code-snippet</span> {
-              <span class="property">font-size</span>:
-              <span class="value">small</span>; }
-            </div>
-            <div class="code-snippet" data-lang="JS">
-              <span class="keyword">const</span>
-              <span class="variable">progress</span>
-              <span class="operator">=</span> <span class="number">++i</span>;
-            </div>
-            <div class="code-snippet" data-lang="HTML">
-              <span class="tag">&lt;</span
-              ><span class="tag-name">student</span>
-              <span class="attribute">is-coding</span
-              ><span class="operator">=</span><span class="string">"true"</span
-              ><span class="tag">&gt;</span>
-            </div>
-          </div>
         </div>
+      </div>
+    </section>
 
-        <div class="game-previews-section">
-          <h3 class="game-previews-title">My Roblox Creations:</h3>
-
-          <div class="image-track-container">
-            <div
-              id="image-track"
-              class="image-track"
-              data-mouse-down-at="0"
-              data-prev-percentage="0"
-            >
-              <img
-                class="track-image"
-                src="assets/asset1.png"
-                draggable="false"
-                data-name="BGC Hangout"
-                data-link="https://www.roblox.com/games/your-game-id-1"
-                alt="Preview of Roblox game: BGC Hangout"
-              />
-
-              <img
-                class="track-image"
-                src="assets/asset2.png"
-                draggable="false"
-                data-name="Boracay V1/V2"
-                data-description="A challenging adventure/puzzle map focused on complex Lua scripting and environment interaction."
-                data-link="https://www.roblox.com/games/your-game-id-2"
-                alt="Preview of Roblox game: Boracay V1/V2"
-              />
-
-              <img
-                class="track-image"
-                src="assets/asset5.png"
-                draggable="false"
-                data-name="Wolf Hub - Business"
-                data-description="High-speed racing game with custom cars, leaderboards, and detailed track modeling."
-                data-link="https://www.roblox.com/games/your-game-id-3"
-                alt="Preview of Roblox game: Wolf Hub"
-              />
+    <section id="apps" class="apps-section fade-in-on-scroll">
+      <div class="container">
+        <h2 class="section-title">Web Utilities</h2>
+        <p class="section-subtitle">Fast, lightweight tools built to solve specific problems.</p>
+        <div class="apps-grid">
+          <a href="apps/grade-calculator.html" class="app-card-link">
+            <div class="app-card">
+              <img src="assets/thumb-calculator.png" alt="Grade Calculator Thumbnail" class="app-thumbnail" />
+              <h3 class="app-title">Grade Calculator</h3>
+              <p class="app-description">Instantly analyze grades and predict required scores.</p>
             </div>
-          </div>
+          </a>
 
-          <p class="track-hint">Drag or swipe the images to explore my work.</p>
+          <a href="apps/randomizer-aguinaldo.html" class="app-card-link">
+            <div class="app-card">
+              <img src="assets/thumb-randomizer.png" alt="Randomizer Thumbnail" class="app-thumbnail" />
+              <h3 class="app-title">Randomizer Aguinaldo</h3>
+              <p class="app-description">A fun, probabilistic tool for holiday gift-giving.</p>
+            </div>
+          </a>
+
+          <a href="apps/followers-checker.html" class="app-card-link">
+            <div class="app-card">
+              <img src="assets/thumb-instagram.png" alt="Follower Checker Thumbnail" class="app-thumbnail" />
+              <h3 class="app-title">Follower Checkers</h3>
+              <p class="app-description">Track Instagram followers with ease and simplicity.</p>
+            </div>
+          </a>
+
+          <a href="apps/date-predictor.html" class="app-card-link">
+            <div class="app-card">
+              <img src="assets/thumb-predictor.png" alt="Date Predictor Thumbnail" class="app-thumbnail" />
+              <h3 class="app-title">Date Predictor</h3>
+              <p class="app-description">Predict dates into the past or future with a console execution aesthetic.</p>
+            </div>
+          </a>
+
+          <a href="apps/image-editor.html" class="app-card-link">
+            <div class="app-card">
+              <img src="assets/thumb-image-editor.png" alt="Image Toolbox Thumbnail" class="app-thumbnail" />
+              <h3 class="app-title">Image Toolbox</h3>
+              <p class="app-description">A versatile editor for memes, adjustments, and more.</p>
+            </div>
+          </a>
+
+          <a href="apps/instagram-mockup.html" class="app-card-link">
+            <div class="app-card">
+              <img src="assets/thumb-mockup.png" alt="Instagram Mockup Thumbnail" class="app-thumbnail" />
+              <h3 class="app-title">Instagram Mockup</h3>
+              <p class="app-description">Generate and download Instagram post previews.</p>
+            </div>
+          </a>
         </div>
       </div>
     </section>
@@ -435,13 +202,16 @@
         <span class="close-btn">&times;</span>
 
         <div class="modal-image-area">
+          <button class="modal-nav-btn modal-prev" aria-label="Previous image">&larr;</button>
           <img id="modal-full-image" src="" alt="Full Game Preview" />
+          <button class="modal-nav-btn modal-next" aria-label="Next image">&rarr;</button>
+          <div class="modal-dots" id="modal-dots"></div>
         </div>
 
         <div id="modal-details" class="modal-details">
           <h3 id="modal-name"></h3>
           <p id="modal-description"></p>
-          <a id="modal-button" href="#" target="_blank" class="btn-primary"
+          <a id="modal-button" href="#" target="_blank" class="cta-button"
             >Visit Game</a
           >
         </div>

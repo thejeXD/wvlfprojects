@@ -10,16 +10,24 @@ html {
 }
 
 :root {
-    /* Light Theme Colors */
-    --bg-primary: #ffffff;
-    --bg-secondary: #f8f9fa;
-    --bg-tertiary: #e9ecef;
-    --text-primary: #1a1a1a;
-    --text-secondary: #6c757d;
-    --text-tertiary: #495057;
-    --border-color: #dee2e6;
-    --accent-color: #e74c3c;
-    --accent-hover: #c0392b;
+    /* Pixelmatters Deep Dark Theme */
+    --bg-primary: #000000;
+    --bg-secondary: #0a0a0a;
+    --bg-tertiary: #171717;
+    --bg-glass: rgba(10, 10, 10, 0.7); 
+    --bg-glass-card: #0a0a0a;
+    --text-primary: #ffffff;
+    --text-secondary: #a1a1aa;
+    --text-tertiary: #71717a;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --border-glass: rgba(255, 255, 255, 0.15);
+    
+    /* Stark Accent Colors */
+    --accent-color: #ffffff;
+    --accent-hover: #e5e7eb;
+    --accent-gradient: #ffffff; 
+    --accent-gradient-hover: #e5e7eb;
+    
     --success-color: #10b981;
     --warning-color: #f59e0b;
     --danger-color: #ef4444;
@@ -31,66 +39,68 @@ html {
     --spacing-lg: 2rem;
     --spacing-xl: 3rem;
     
-    /* Typography */
-    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    /* Typography (Massive Scale) */
+    --font-family-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-family-display: 'Inter', var(--font-family-sans); 
     --font-size-sm: 0.875rem;
     --font-size-base: 1rem;
     --font-size-lg: 1.125rem;
-    --font-size-xl: 1.25rem;
-    --font-size-2xl: 1.5rem;
-    --font-size-3xl: 2rem;
-    --font-size-4xl: 2.5rem;
+    --font-size-xl: 1.5rem;
+    --font-size-2xl: 2rem;
+    --font-size-3xl: 2.5rem;
+    --font-size-4xl: 3.5rem;
+    --font-size-5xl: 5rem; /* Increased heavily */
     
-    /* Border Radius */
-    --radius-sm: 0.5rem;
-    --radius-md: 0.75rem;
-    --radius-lg: 1rem;
-    --radius-xl: 1.25rem;
+    /* Pixelmatters Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-2xl: 32px;
     
-    /* Shadows */
-    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
-    --shadow-md: 0 6px 10px -2px rgba(0, 0, 0, 0.12);
-    --shadow-lg: 0 12px 20px -5px rgba(0, 0, 0, 0.15);
+    /* Subtle Shadows */
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.5);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.8);
+    --glow-accent: none;
 
-
-    --accent-color-rgb: 37, 99, 235;
-}
-
-body.dark-theme {
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
-    --bg-tertiary: #334155;
-    --text-primary: #f1f5f9;
-    --text-secondary: #94a3b8;
-    --text-tertiary: #cbd5e1;
-    --border-color: #334155;
-    --accent-color: #e74c3c;
-    --accent-hover: #c0392b;
+    --accent-color-rgb: 255, 255, 255;
 }
 
 body {
-    font-family: var(--font-family);
+    font-family: var(--font-family-sans);
     background: var(--bg-primary);
     color: var(--text-primary);
     line-height: 1.6;
     font-weight: 400;
     transition: background-color 0.3s ease, color 0.3s ease;
+    overflow-x: hidden; /* Prevent horizontal scroll from animations */
+}
+
+h1, h2, h3, h4, h5, h6, .nav-brand {
+    font-family: var(--font-family-display);
 }
 
 /* ==================== NAVBAR ==================== */
 .navbar {
-    background: var(--bg-primary);
-    border-bottom: 1px solid var(--border-color);
-    position: sticky;
-    top: 0;
+    background: transparent;
+    position: fixed;
+    top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 800px;
     z-index: 1000;
-    backdrop-filter: blur(10px);
-    background: rgba(255, 255, 255, 0.8);
+    border-radius: var(--radius-2xl);
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-glass);
+    transition: all 0.3s ease;
 }
 
-body.dark-theme .navbar {
-    background: rgba(15, 23, 42, 0.8);
-}
+
 
 .nav-container {
     max-width: 1200px;
@@ -190,49 +200,70 @@ body.dark-theme .navbar {
 /* ==================== HERO SECTION ==================== */
 .hero {
     padding: var(--spacing-xl) var(--spacing-md);
-    text-align: center;
-    background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+    text-align: left; /* Changed to left for editorial look */
+    background: var(--bg-primary);
     min-height: 60vh;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    display: none; /* Removed generic dot background */
 }
 
 .hero-content {
     max-width: 800px;
     margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    animation: slideUp 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .hero-title {
-    font-weight: 900; 
-    letter-spacing: -1.5px;
-    font-size: var(--font-size-4xl);
+    font-weight: 500; 
+    letter-spacing: -2px;
+    font-size: var(--font-size-5xl);
     color: var(--text-primary);
     margin-bottom: var(--spacing-sm);
+    line-height: 1.05;
 }
 
 .hero-subtitle {
     font-size: var(--font-size-xl);
     color: var(--text-secondary);
     margin-bottom: var(--spacing-lg);
+    max-width: 600px;
 }
 
 .cta-button {
-    padding: 0.75rem 2rem;
-    background: linear-gradient(45deg, var(--accent-color) 0%, var(--accent-hover) 100%);
-    color: white;
-    border-radius: 9999px; 
-    font-weight: 700; 
-    display: inline-block;
+    padding: 1rem 2.5rem;
+    background: transparent;
+    color: var(--text-primary);
+    border-radius: var(--radius-2xl); 
+    font-weight: 500; 
+    font-family: var(--font-family-display);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     text-decoration: none; 
     transition: all 0.2s ease;
-    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(32px);
+    -webkit-backdrop-filter: blur(32px);
 }
 
 .cta-button:hover {
-    background: linear-gradient(45deg, var(--accent-hover) 0%, var(--accent-color) 100%);
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 10px 20px rgba(231, 76, 60, 0.4);
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    border-color: var(--text-primary);
 }
 
 /* ==================== APPS SECTION ==================== */
@@ -275,17 +306,17 @@ body.dark-theme .navbar {
 
 /* --- App Card Core Styles --- */
 .app-card {
-    background: var(--bg-secondary);
+    background: transparent;
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-xl);
-    padding: var(--spacing-md);
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
     display: flex;
     flex-direction: column;
     text-align: left; 
-    padding-top: var(--spacing-xl); 
     position: relative;
-    transform: none; 
+    box-shadow: none;
+    overflow: hidden;
     
     /* CRITICAL FIX 2: Force card to fill entire link wrapper height */
     height: 100%;
@@ -293,10 +324,8 @@ body.dark-theme .navbar {
 
 /* Hover effect moved to the link wrapper */
 .app-card-link:hover .app-card {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-xl);
-    border-color: var(--accent-color);
-    background: color-mix(in srgb, var(--bg-secondary) 95%, var(--accent-hover) 5%);
+    border-color: rgba(255,255,255,0.4);
+    transform: scale(1.02);
 }
 
 .app-card.coming-soon {
@@ -565,19 +594,21 @@ body.dark-theme .navbar {
     background: transparent;
     color: var(--accent-color);
     border: 2px solid var(--accent-color);
-    border-radius: var(--radius-sm);
+    border-radius: 9999px;
     font-weight: 600;
     font-size: var(--font-size-base);
+    font-family: var(--font-family-display);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
     display: inline-block;
 }
 
 .btn-secondary:hover {
-    background: var(--accent-color);
+    background: var(--accent-gradient);
+    border-color: transparent;
     color: white;
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-md), var(--glow-accent);
 }
 
 .btn-secondary:active {
@@ -587,23 +618,24 @@ body.dark-theme .navbar {
 /* Primary button style (for consistency) */
 .btn-primary {
     padding: 0.5rem 1.5rem;
-    background: var(--accent-color);
+    background: var(--accent-gradient);
     color: white;
-    border: 2px solid var(--accent-color);
-    border-radius: var(--radius-sm);
+    border: none;
+    border-radius: 9999px;
     font-weight: 600;
     font-size: var(--font-size-base);
+    font-family: var(--font-family-display);
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
     display: inline-block;
     text-decoration: none;
+    box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover {
-    background: var(--accent-hover);
-    border-color: var(--accent-hover);
+    background: var(--accent-gradient-hover);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-md), var(--glow-accent);
 }
 
 .btn-primary:active {
@@ -806,7 +838,6 @@ body.dark-theme .track-image {
 }
 
 
-/* ==================== CUSTOM IMAGE MODAL ==================== */
 .custom-modal {
     position: fixed; 
     z-index: 2000 !important;
@@ -814,7 +845,9 @@ body.dark-theme .track-image {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8); 
+    background-color: rgba(0, 0, 0, 0.7); 
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     
     /* Always display: flex for centering */
     display: flex !important;
@@ -834,9 +867,10 @@ body.dark-theme .track-image {
 }
 
 .modal-content {
-    background: var(--bg-primary);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-xl);
     
     max-width: 900px; 
     width: 90%;
@@ -880,8 +914,74 @@ body.dark-theme .track-image {
 .modal-image-area {
     width: 100%;
     aspect-ratio: 30 / 20; 
+    position: relative;
     overflow: hidden;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
+    background: #000;
+}
+
+/* Gallery Navigation Arrows */
+.modal-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.2);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+    transition: all 0.2s ease;
+    opacity: 0;
+}
+
+.modal-image-area:hover .modal-nav-btn {
+    opacity: 1;
+}
+
+.modal-nav-btn:hover {
+    background: white;
+    color: black;
+}
+
+.modal-prev {
+    left: 10px;
+}
+
+.modal-next {
+    right: 10px;
+}
+
+/* Gallery Dots */
+.modal-dots {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+
+.modal-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-dot.active {
+    background: white;
+    transform: scale(1.2);
 }
 
 #modal-full-image {
@@ -909,18 +1009,8 @@ body.dark-theme .track-image {
 }
 
 #modal-button {
-    display: inline-block;
-    padding: 0.5rem 1.5rem;
-    background: var(--accent-color);
-    color: white;
-    border-radius: var(--radius-sm);
-    text-decoration: none;
-    font-weight: 600;
-    transition: background 0.2s ease;
-}
-
-#modal-button:hover {
-    background: var(--accent-hover);
+    margin-top: var(--spacing-sm);
+    /* uses .cta-button styling now via HTML class */
 }
 
 @media (max-width: 768px) {

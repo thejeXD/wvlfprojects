@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>
+        Grade Calculator: Calculate GWA & Predict Scores | Wolf's Apps
+    </title>
+    <link rel="canonical" href="https://wolfprojects.netlify.app/apps/grade-calculator.html" />
+
+    <meta name="description"
+        content="The ultimate free student tool to calculate GWA, track subject performance, and predict the required grades to pass your courses." />
+
+    <meta property="og:title" content="Free Grade Calculator & GWA Predictor" />
+    <meta property="og:description"
+        content="Stop guessing! Use this powerful, student-focused tool to instantly analyze your grades and predict required scores. Built by Wolf." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://wolfprojects.netlify.app/apps/grade-calculator.html" />
+    <meta property="og:image" content="/assets/thumb-calculator-Dg16Nm75.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Grade Calculator: GWA & Score Predictor" />
+    <meta name="twitter:description"
+        content="Instantly analyze your grades and predict the scores you need to pass. Essential tool for every student." />
+    <link rel="icon" href="/assets/favicon-CGyAXFkn.ico" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="/assets/logo-D_hkhJGG.png" />
+    <script type="module" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script type="module" crossorigin src="/assets/gradeCalculator-Bv5om37N.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/main-B-S92MT7.js">
+  <link rel="stylesheet" crossorigin href="/assets/main-C2ilbWbA.css">
+  <link rel="stylesheet" crossorigin href="/assets/gradeCalculator-De-o6Dbe.css">
+</head>
+
+<body>
+        <nav class="navbar">
+      <div class="nav-container">
+        <a href="../index.html" class="nav-brand-link">
+          <div class="nav-brand">Wolf</div>
+        </a>
+
+        <button
+          class="nav-toggle"
+          id="nav-toggle"
+          aria-label="Open navigation menu"
+          aria-controls="nav-links"
+          aria-expanded="false"
+        >
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+        </button>
+
+        <div class="nav-links" id="nav-links" data-visible="false">
+          <a href="../index.html#portfolio" class="nav-link">Portfolio</a>
+          <a href="../index.html#apps" class="nav-link">Utilities</a>
+          <a href="../index.html#about" class="nav-link">About</a>
+          <a href="../contact.html" class="nav-link">Contact</a>
+          <a
+            href="https://github.com/thejeXD"
+            target="_blank"
+            class="nav-link"
+            aria-label="GitHub Profile"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+            </svg>
+            <span class="nav-link-text">GitHub</span>
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="container fade-in-on-scroll">
+        <div class="main-content-header">
+            <h2 class="section-title">Grade Calculator</h2>
+            <div class="table-actions">
+                <button class="action-btn" id="add-subject-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span>Add Subject</span>
+                </button>
+
+                <!-- Data Management Dropdown -->
+                <div class="action-dropdown" id="data-dropdown-container">
+                    <button class="action-btn" id="data-dropdown-btn">
+                        <span>Manage Data</span>
+                        <svg class="dropdown-arrow-icon" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="3">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="action-dropdown-content">
+                        <button class="dropdown-item" id="import-csv-btn"><svg width="16" height="16"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 12 12 7 7 12"></polyline>
+                                <line x1="12" y1="7" x2="12" y2="21"></line>
+                            </svg><span>Import CSV</span></button>
+                        <button class="dropdown-item" id="export-csv-btn"><svg width="16" height="16"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg><span>Export CSV</span></button>
+                        <button class="dropdown-item" id="manage-storage-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg><span>Manage Storage</span></button>
+                        <hr class="dropdown-divider" />
+                        <button class="dropdown-item destructive" id="clear-grades-btn"><svg width="16" height="16"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path
+                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                </path>
+                            </svg><span>Clear All Grades</span></button>
+                        <button class="dropdown-item destructive" id="delete-all-btn"><svg width="16" height="16"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                                <line x1="18" y1="9" x2="12" y2="15"></line>
+                                <line x1="12" y1="9" x2="18" y2="15"></line>
+                            </svg><span>Delete All Subjects</span></button>
+                    </div>
+                </div>
+
+                <!-- Standalone Settings Button -->
+                <button class="action-btn icon-btn" id="settings-btn" title="Settings">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path
+                            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                        </path>
+                    </svg>
+                </button>
+
+                <!-- "More" Dropdown (Kebab Icon) -->
+                <div class="action-dropdown" id="actions-dropdown-container">
+                    <button class="action-btn icon-btn" id="actions-dropdown-btn" title="More actions">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="1"></circle>
+                            <circle cx="12" cy="5" r="1"></circle>
+                            <circle cx="12" cy="19" r="1"></circle>
+                        </svg>
+                    </button>
+                    <div class="action-dropdown-content">
+                        <button class="dropdown-item" id="whats-new-btn"><svg width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="20 12 20 22 4 22 4 12"></polyline>
+                                <rect x="2" y="7" width="20" height="5"></rect>
+                                <line x1="12" y1="22" x2="12" y2="7"></line>
+                                <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+                                <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+                            </svg><span>What's New</span></button>
+                        <button class="dropdown-item" id="print-btn"><svg width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2">
+                                </path>
+                                <rect x="6" y="14" width="12" height="8"></rect>
+                            </svg><span>Print Report</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="print-only-section">
+            <div class="print-header">
+                <div class="report-card-title">
+                    <img src="/assets/logo-D_hkhJGG.png" alt="Logo" class="print-logo">
+                    <h2>Official Grade Report</h2>
+                    <p>Wolf's Grade Calculator</p>
+                </div>
+                <div class="student-info">
+                    <div class="info-item"><strong>Student Name:</strong> <span>_________________________</span></div>
+                    <div class="info-item"><strong>Date:</strong> <span id="print-date"></span></div>
+                </div>
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="grades-table">
+                <thead>
+                    <tr>
+                        <th>Subject Name</th>
+                        <th>Prelim (<span id="label-prelim">20%</span>)</th>
+                        <th>Midterm (<span id="label-midterm">20%</span>)</th>
+                        <th>Pre-Finals (<span id="label-prefinals">20%</span>)</th>
+                        <th>Finals (<span id="label-finals">40%</span>)</th>
+                        <th>GWA</th>
+                        <th id="needed-header" style="display: none;">Needed</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="subjects-container">
+                    <!-- Subject rows will be injected here by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="summary-section">
+            <!-- The meme-container will now hold the image, overlay, and all text content -->
+            <div class="meme-container" id="meme-container">
+                <!-- GWA Circle and Text (will be layered on top) -->
+                <div class="gwa-circle-container">
+                    <svg class="gwa-circle-progress" width="180" height="180" viewBox="0 0 180 180">
+                        <circle class="progress-bg" cx="90" cy="90" r="80"></circle>
+                        <circle class="progress-bar" id="gwa-progress-bar" cx="90" cy="90" r="80"></circle>
+                    </svg>
+                    <div class="gwa-circle-text"><span class="summary-label">Overall GWA</span><span
+                            class="summary-value" id="overall-gwa">0.00</span></div>
+                </div>
+                <!-- Bottom Text Area -->
+                <div class="summary-bottom-text">
+                    <div class="summary-value status" id="status">Enter Grades</div>
+                    <div class="motivational-text" id="motivational-text"></div>
+                </div>
+                <!-- The meme image will be injected here by JS as a background -->
+            </div>
+        </div>
+
+        <div class="print-only-section">
+            <div class="print-summary">
+                <div class="print-gwa">
+                    <strong>Overall GWA:</strong> <span id="print-overall-gwa">0.00</span>
+                </div>
+                <div class="print-status">
+                    <strong>Status:</strong> <span id="print-status">N/A</span>
+                </div>
+            </div>
+
+            <div class="print-footer">
+                <div class="signature-line">
+                    <strong>Registrar's Signature:</strong> <span>_________________________</span>
+                </div>
+                <p class="footer-note">This is a computer-generated report and does not require a signature if
+                    electronically sent.</p>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h3>Information</h3>
+            <div class="info-dropdowns">
+                <div class="dropdown">
+                    <button class="dropdown-btn" data-dropdown="privacy">
+                        <span>Data & Privacy</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="dropdown-content" id="privacy-dropdown" style="line-height: 1.7;">
+                        <p>
+                            <strong>Your data is private and is never sent to a server.</strong> This application uses
+                            your browser's <code>localStorage</code> for essential functionality, which is different
+                            from tracking cookies.
+                        </p>
+                        <ul>
+                            <li><strong>Settings:</strong> Your preferences (like theme and grade weights) are saved for
+                                convenience.</li>
+                            <li><strong>Grade Data:</strong> Your subjects and grades are saved so you don't lose your
+                                work when you refresh or close the page.</li>
+                        </ul>
+                        <p>You can clear all this data at any time by clearing your browser's cache and site data for
+                            this page.</p>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="dropdown-btn" data-dropdown="weights">
+                        <span>Weight Distribution</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="dropdown-content" id="weights-dropdown">
+                        <p id="weights-info">Prelim (20%), Midterm (20%), Pre-Finals (20%), Finals (40%)</p>
+                        <small>Adjust these percentages in Settings</small>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="dropdown-btn" data-dropdown="passing">
+                        <span>Passing Grade</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="dropdown-content" id="passing-dropdown">
+                        <p id="passing-info">59.50 and above</p>
+                        <small>Change this threshold in Settings.</small>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="dropdown-btn" data-dropdown="how-to">
+                        <span>How to Use</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="dropdown-content" id="how-to-dropdown">
+                        <ul>
+                            <li><strong>Add Subjects:</strong> Start by using the "+ Add Subject" button.</li>
+                            <li><strong>Enter Grades:</strong> Fill in the grades you've received for each term.</li>
+                            <li><strong>See Results:</strong> Your GWA is calculated instantly.</li>
+                            <li><strong>Customize:</strong> Open <strong>Settings</strong> to adjust weights and
+                                features.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="dropdown-btn" data-dropdown="features">
+                        <span>Key Features</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="dropdown-content" id="features-dropdown">
+                        <ul>
+                            <li><strong>Grade Prediction:</strong> See the grade you need to pass a subject.</li>
+                            <li><strong>Component Breakdown:</strong> Calculate term grades from individual tasks and
+                                exams.</li>
+                            <li><strong>Printable Reports:</strong> Generate a clean, printable report of your grades.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="dropdown-btn" data-dropdown="about">
+                        <span>About This Tool</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="dropdown-content" id="about-dropdown">
+                        <p>This calculator is a <strong>powerful</strong>, all-in-one tool for students to monitor,
+                            analyze, and predict their academic performance. It was built to be
+                            <strong>intuitive</strong>, <strong>fast</strong>, and <strong>highly customizable</strong>
+                            to fit any school's grading system.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </main>
+
+    <div id="settings-overlay" class="overlay"></div>
+    <div id="settings-drawer" class="settings-drawer">
+        <div class="settings-header">
+            <h2 class="settings-title">Settings</h2>
+            <button id="close-settings-btn" class="close-settings">&times;</button>
+        </div>
+        <div class="settings-content">
+            <div class="settings-section">
+                <h3 class="section-title">Goal Setting</h3>
+                <p class="hint">Set a target GWA to see what you need on remaining subjects to achieve your goal.</p>
+                <div class="setting-row">
+                    <label for="target-honor-gwa">Target Honor GWA</label>
+                    <div class="input-group"><input type="number" id="target-honor-gwa" min="0" max="100" step="0.01"
+                            placeholder="e.g., 85.00"></div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3 class="section-title">Grade Weights</h3>
+                <p class="hint">The contribution of each term to the final GWA. Must sum to 100%.</p>
+                <div class="setting-row">
+                    <label for="w-prelim">Prelim Weight</label>
+                    <div class="input-group"><input type="number" id="w-prelim" min="0" max="100">%</div>
+                </div>
+                <div class="setting-row">
+                    <label for="w-midterm">Midterm Weight</label>
+                    <div class="input-group"><input type="number" id="w-midterm" min="0" max="100">%</div>
+                </div>
+                <div class="setting-row">
+                    <label for="w-prefinals">Pre-Finals Weight</label>
+                    <div class="input-group"><input type="number" id="w-prefinals" min="0" max="100">%</div>
+                </div>
+                <div class="setting-row">
+                    <label for="w-finals">Finals Weight</label>
+                    <div class="input-group"><input type="number" id="w-finals" min="0" max="100">%</div>
+                </div>
+                <div class="setting-row">
+                    <label for="passing-grade">Passing Threshold</label>
+                    <div class="input-group"><input type="number" id="passing-grade" min="0" max="100" step="0.01">
+                    </div>
+                </div>
+                <div class="setting-row">
+                    <button id="reset-weights-btn" class="btn-secondary">Reset Weights to Default</button>
+                </div>
+            </div>
+            <div class="settings-section">
+                <h3 class="section-title">Features</h3>
+                <div class="setting-row toggle-row">
+                    <label for="requirement-toggle">Auto-fill 'Needed' Grade</label> <input type="checkbox"
+                        id="requirement-toggle">
+                </div>
+                <div class="setting-row toggle-row">
+                    <label for="component-toggle">Enable Component Breakdown</label> <input type="checkbox"
+                        id="component-toggle">
+                </div>
+            </div>
+            <div class="settings-section">
+                <h3 class="section-title">Table Management</h3>
+                <p class="hint">Set a limit on the number of subjects you can add.</p>
+                <div class="setting-row">
+                    <label for="max-subjects-input">Maximum Subjects</label>
+                    <div class="input-group"><input type="number" id="max-subjects-input" min="1" max="49"></div>
+                </div>
+            </div>
+            <div id="component-weights" class="settings-section" style="display: none;">
+                <h3 class="section-title">Component Weights</h3>
+                <p class="hint">The weight of sub-components for calculating term grades. Must sum to 100%.</p>
+                <div class="setting-row">
+                    <label for="w-performance">Performance Weight</label>
+                    <div class="input-group"><input type="number" id="w-performance" min="0" max="100">%</div>
+                </div>
+                <div class="setting-row">
+                    <label for="w-activities">Activities Weight</label>
+                    <div class="input-group"><input type="number" id="w-activities" min="0" max="100">%</div>
+                </div>
+                <div class="setting-row">
+                    <label for="w-exam">Exam Weight</label>
+                    <div class="input-group"><input type="number" id="w-exam" min="0" max="100">%</div>
+                </div>
+                <div class="setting-row">
+                    <button id="reset-component-weights-btn" class="btn-secondary">Reset Component Weights</button>
+                </div>
+            </div>
+        </div>
+        <div class="settings-footer">
+            <button id="save-settings-btn" class="btn-primary save-settings">Save Settings</button>
+        </div>
+    </div>
+
+    <div id="component-overlay" class="overlay"></div>
+    <div id="component-drawer" class="settings-drawer">
+        <div class="settings-header">
+            <h2 id="component-drawer-title" class="settings-title">Component Grades</h2>
+            <button id="close-component-drawer-btn" class="close-settings">&times;</button>
+        </div>
+        <div class="settings-content">
+            <div class="settings-section">
+                <h3 class="section-title">Performance Tasks (<span id="comp-perf-weight">40%</span>)</h3>
+                <div id="performance-tasks-container"></div>
+                <button class="add-component-btn" data-component-type="performance">+ Add Performance Task</button>
+            </div>
+            <div class="settings-section">
+                <h3 class="section-title">Activities / Quizzes (<span id="comp-act-weight">30%</span>)</h3>
+                <div id="activities-container"></div>
+                <button class="add-component-btn" data-component-type="activities">+ Add Activity/Quiz</button>
+            </div>
+            <div class="settings-section">
+                <h3 class="section-title">Exam (<span id="comp-exam-weight">30%</span>)</h3>
+                <div id="exam-container"></div>
+                <button class="add-component-btn" data-component-type="exam">+ Add Exam</button>
+            </div>
+            <div class="component-result">
+                <strong>Calculated Term Grade</strong>
+                <span id="component-calculated-grade">0.00</span>
+            </div>
+        </div>
+        <div class="settings-footer">
+            <button id="apply-component-grade-btn" class="btn-primary save-settings">Apply Grade</button>
+        </div>
+    </div>
+
+    <div id="storage-manager-overlay" class="overlay"></div>
+    <div id="storage-manager-drawer" class="settings-drawer">
+        <div class="settings-header">
+            <h2 class="settings-title">Storage Manager</h2>
+            <button id="close-storage-manager-btn" class="close-settings">&times;</button>
+        </div>
+        <div class="settings-content">
+            <div class="settings-section">
+                <h3 class="section-title">View Saved Settings</h3>
+                <p class="hint">This is a read-only view of your current application settings stored in the browser.</p>
+                <pre id="settings-json-display" class="json-display"></pre>
+            </div>
+            <div class="settings-section">
+                <h3 class="section-title">View Saved Grade Data</h3>
+                <p class="hint">Select a data type from the dropdown to view its saved content in JSON format.</p>
+                <div class="setting-row">
+                    <label for="storage-data-selector">Data Type</label>
+                    <select id="storage-data-selector" class="storage-selector"><option value="all_subjects">All Subjects (Summary)</option></select>
+                </div>
+                <pre id="grade-data-json-display" class="json-display" style="margin-top: var(--spacing-sm);"></pre>
+            </div>
+            <div class="settings-section">
+                <h3 class="section-title">Manage Grade Data</h3>
+                <p class="hint">This will delete all subjects, grades, and component breakdowns. Your settings will be preserved.</p>
+                <button id="clear-grade-data-btn" class="btn-secondary destructive-secondary" style="width: 100%;">Clear Grade Data</button>
+            </div>
+            <div class="settings-section">
+                <h3 class="section-title">Factory Reset</h3>
+                <p class="hint">This will permanently delete <strong>all</strong> application data, including settings, and restore the app to its original state.</p>
+                <button id="delete-all-data-btn" class="btn-danger" style="width: 100%;">Delete All Data</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>Created by Wolf with ❤️</p>
+        <p class="copyright">© 2025 All Rights Reserved</p>
+    </footer>
+
+    <!-- Load main script first for shared functions, then the app-specific script -->
+</body>
+
+</html>
